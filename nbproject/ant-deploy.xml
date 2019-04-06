@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< Updated upstream
 <!--
 DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
 
@@ -38,6 +39,8 @@ made subject to such option by the copyright holder.
 
 Contributor(s):
 -->
+=======
+>>>>>>> Stashed changes
 <project default="-deploy-ant" basedir=".">
     <target name="-init" if="deploy.ant.enabled">
         <property file="${deploy.ant.properties.file}"/>
@@ -55,7 +58,11 @@ Contributor(s):
                     <isset property="tomcat.password"/>
                 </not>
             </condition>
+<<<<<<< Updated upstream
         </fail>
+=======
+        </fail>    
+>>>>>>> Stashed changes
     </target>
     <target name="-deploy-ant" if="deploy.ant.enabled" depends="-init,-check-credentials">
         <echo message="Deploying ${deploy.ant.archive} to ${Context(path)}"/>
