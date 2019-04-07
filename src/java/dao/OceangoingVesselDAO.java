@@ -12,6 +12,7 @@ import java.net.URLConnection;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.stream.JsonReader;
 import java.net.MalformedURLException;
 import java.util.*;
 
@@ -21,18 +22,43 @@ import java.util.*;
  */
 public class OceangoingVesselDAO {
     //public ArrayList<OceangoingVessel> ogvList;
+    //public static ArrayList<OceangoingVessel> oceanGoingVessel;
     
     public static ArrayList<OceangoingVessel> getVessels() throws MalformedURLException, IOException{
         ArrayList<OceangoingVessel> ogvList = new ArrayList<>();
         
         URL blackbox = new URL("http://127.0.0.1:8080/getVesselDetail");
         URLConnection conn = blackbox.openConnection();
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
-            String inputLine;
-            
-            while ((inputLine = in.readLine()) != null)
-                System.out.println(inputLine);
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream())); 
+        ArrayList<OceangoingVessel> oceanGoingVessel = new ArrayList<>();
+        
+        try(JsonReader jsonReader = new JsonReader(in)){
+            jsonReader.beginObject();
+            while (jsonReader.hasNext()) {
+                
+                String name = jsonReader.nextName();
+                System.out.println("name = " + name);
+                if (name.equals("Result")) {
+                    
+                    oceanGoingVessel = readOceanGoingVesselDetail(jsonReader, oceanGoingVessel);
+                }
+                if (name.equals("Status")){
+                    String status = jsonReader.nextString();
+                }
+                if (name.equals("Warnings")){
+                    readWarnings(jsonReader);
+                }
         }
+         
+         
         return ogvList;
+    }
+        
+        
+    }
+    
+    public ArrayList<OceangoingVessel> readOceanGoingVesselDetail(JsonReader jsonReader, ArrayList<OceangoingVessel> oceanGoingVessel) throws IOException{
+        jsonReader.beginObject();
+        return oceanGoingVessel;
     }
 }
