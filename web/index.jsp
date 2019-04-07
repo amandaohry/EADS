@@ -36,10 +36,18 @@
         
         
         <%
-            ArrayList<Service> serviceList = new ArrayList<>();
-            if (request.getAttribute("serviceList") != null) {
-                serviceList = (ArrayList<Service>) request.getAttribute("serviceList");
+            HashMap<String, Service> serviceMap = new HashMap<>();
+            if (request.getAttribute("serviceMap") != null) {
+                serviceMap = (HashMap<String, Service>) request.getAttribute("serviceMap");
             }
+            ArrayList<Service> serviceList = new ArrayList<>(serviceMap.values());
+            
+            HashMap<String, Service> serviceMap2 = new HashMap<>();
+            if (request.getAttribute("serviceMap2") != null) {
+                serviceMap2 = (HashMap<String, Service>) request.getAttribute("serviceMap2");
+            }
+            ArrayList<Service> serviceList2 = new ArrayList<>(serviceMap.values());
+            
         %> 
         <form action='ServiceServlet' method='get' name ="ServiceServlet">
        
@@ -52,7 +60,17 @@
             if (!serviceList.isEmpty()) {
                 for(Service s: serviceList){
         %>
-        <h4 class="text-center red-text"><%=s.getMMSI()%></h4>
+        <p class="text-center red-text"><%=s.getMMSI()%></p>
+        <%
+                }
+            }
+        %>
+        <h2 class="text-center red-text"><%="Service List 2"%></h2>
+        <%                            
+            if (!serviceList2.isEmpty()) {
+                for(Service s: serviceList2){
+        %>
+        <p class="text-center red-text"><%=s.getMMSI()%></p>
         <%
                 }
             }

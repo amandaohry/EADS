@@ -36,15 +36,29 @@ public class ServiceServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         
-        ServiceDAO currentTimeDAO = new ServiceDAO();
+        HashMap<String, Service> map = new HashMap<>();
+        ServiceDAO serviceDAO = new ServiceDAO(map);
         
-        ArrayList<Service> serviceList = currentTimeDAO.getServiceDetail(); //Calling getcurrenttime function
+        HashMap<String, Service> serviceMap = serviceDAO.getServiceDetail(); //Calling getServiceDetail() function
+        if (serviceMap !=null){
+        System.out.println("serviceMap: " + serviceMap.keySet());
+        } else {
+            System.out.println("serviceMap is empty" );
+        }
         
-        System.out.println("serviceList: " + serviceList);
+        HashMap<String, Service> serviceMap2 = serviceDAO.getServiceStatus(); //Calling getServiceStatus() function
         
-        request.setAttribute("serviceList", serviceList); //with setAttribute() you can define a "key" and value pair so that you can get it in future using getAttribute("key")
+        if (serviceMap2 == null){
+            System.out.println("serviceMap is empty" );
+        } else {
+            System.out.println("serviceMap: " + serviceMap2.keySet());
+        }
         
-        request.getRequestDispatcher("/index.jsp").forward(request, response);//RequestDispatcher is used to send the control to the invoked page.
+        request.setAttribute("serviceMap", serviceMap);
+        request.setAttribute("serviceMap2", serviceMap2);
+        
+        
+        request.getRequestDispatcher("/index.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
