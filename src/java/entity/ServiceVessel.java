@@ -12,18 +12,12 @@ package entity;
 public class ServiceVessel {
     //static information
     public String mmsi;
-//    public String vesselName;
     public int capacity;
     public int pumpRate;
-//    public float cruiseSpeed;
     
     //dynamic information
     
     public int currentCapacity;
-//    public float[] location;
-//    public float currentSpeed;
-//    public float[] currentDestination;
-//    public float eta;
     public String status;
     
     //service vessel statistics
@@ -77,7 +71,7 @@ public class ServiceVessel {
     public float getOperCost(){
         return this.operCost;
     }
-//</editor-fold>
+    //</editor-fold>
     
     //setters - you can only set dynamic attributes
     //<editor-fold defaultstate="collapsed" desc="UNFOLD TO SEE SETTERS">

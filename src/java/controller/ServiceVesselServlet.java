@@ -34,27 +34,13 @@ public class ServiceVesselServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HashMap<String, ServiceVessel> map = new HashMap<>();
-        ServiceVesselDAO serviceVesselDAO = new ServiceVesselDAO(map);
-        
-        HashMap<String, ServiceVessel> serviceVesselMap = serviceVesselDAO.getServiceVesselDetail(); //Calling getServiceDetail() function
-        if (serviceVesselMap !=null){
-        System.out.println("serviceVesselMap: " + serviceVesselMap.keySet());
-        } else {
-            System.out.println("serviceVesselMap is empty" );
-        }
-        
-        HashMap<String, ServiceVessel> serviceVesselMap2 = serviceVesselDAO.getServiceVesselStatus(); //Calling getServiceStatus() function
-        if (serviceVesselMap2 !=null){
-            System.out.println("serviceVesselMap2: " + serviceVesselMap2.keySet());
-        } else {
-            System.out.println("serviceVesselMap2 is empty" );
-        }
 
-        request.setAttribute("serviceVesselMap", serviceVesselMap);
-        request.setAttribute("serviceVesselMap2", serviceVesselMap2);
+        HashMap<String, ServiceVessel> serviceVesselMap = ServiceVesselDAO.getServiceVesselDetail(); //Calling getServiceDetail() function
+
         
-        HashMap<String, ServiceVessel> serviceVesselMap3 = serviceVesselDAO.getServiceVesselStatistics(); //Calling getServiceStatus() function
+        HashMap<String, ServiceVessel> serviceVesselMap2 = ServiceVesselDAO.getServiceVesselStatus(); //Calling getServiceStatus() function
+
+        HashMap<String, ServiceVessel> serviceVesselMap3 = ServiceVesselDAO.getServiceVesselStatistics(); //Calling getServiceStatus() function
         if (serviceVesselMap3 !=null){
             System.out.println("serviceVesselMap3: " + serviceVesselMap3.keySet());
         } else {
@@ -66,7 +52,7 @@ public class ServiceVesselServlet extends HttpServlet {
         request.setAttribute("serviceVesselMap3", serviceVesselMap3);
         
         
-        request.getRequestDispatcher("/index.jsp").forward(request, response);
+        request.getRequestDispatcher("/ServiceVessel.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

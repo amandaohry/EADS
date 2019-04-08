@@ -7,21 +7,21 @@ package controller;
 
 import dao.ServiceDAO;
 import entity.Service;
-import java.util.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author aquil
  */
-@WebServlet(name = "ServiceServlet", urlPatterns = {"/ServiceServlet"})
-public class ServiceServlet extends HttpServlet {
+@WebServlet(name = "ServiceByRequestIDServlet", urlPatterns = {"/ServiceByRequestIDServlet"})
+public class ServiceByRequestIDServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -34,20 +34,19 @@ public class ServiceServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        
-        
-        
-        HashMap<String,ArrayList<Service>> serviceMap = ServiceDAO.getServiceDetail(); //Calling getServiceDetail() function
-        
-        HashMap<String, ArrayList<Service>> serviceMap2 = ServiceDAO.getServiceStatus(); //Calling getServiceStatus() function
+        String requestID = request.getParameter("requestID");
+                
+        ArrayList<Service> serviceByRequestIDList = ServiceDAO.getServiceDetailByRequestID(requestID); //Calling getServiceDetail() function
+        if (serviceByRequestIDList!=null){
+            System.out.println(serviceByRequestIDList.get(0));
+        }
+        ArrayList<Service> serviceByRequestIDList2 = ServiceDAO.getServiceStatusByRequestID(requestID); //Calling getServiceStatus() function
 
+        request.setAttribute("serviceByRequestIDList", serviceByRequestIDList); 
+        request.setAttribute("serviceByRequestIDList2", serviceByRequestIDList2);
         
-        request.setAttribute("serviceMap", serviceMap);
-        request.setAttribute("serviceMap2", serviceMap2);
         
-        
-        request.getRequestDispatcher("/Service.jsp").forward(request, response);
+        request.getRequestDispatcher("/ServiceByRequestID.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
