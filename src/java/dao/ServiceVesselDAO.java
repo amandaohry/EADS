@@ -16,20 +16,29 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author aquil
  */
 public class ServiceVesselDAO {
-    private static ServiceVessel serviceVessel;
-    private static HashMap<String, ServiceVessel> serviceVesselMap = new HashMap<>();
-    public static int smallestCapacity = 825;
+    private ServiceVessel serviceVessel;
+    private HashMap<String, ServiceVessel> serviceVesselMap = new HashMap<>();
+    public ArrayList<ServiceVessel> serviceVessels;
+    public int smallestCapacity = 825;
     
     //getServiceVesselDetail()
     //<editor-fold defaultstate="collapsed" desc="getServiceVesselDetail()">
+    public void mapToList(){
+    	for (Map.Entry<String, ServiceVessel> entry : serviceVesselMap.entrySet()) {
+    	    String key = entry.getKey();
+    	    ServiceVessel value = entry.getValue();
+    	    serviceVessels.add(value);
+    	}
+    }
     
-    public static HashMap<String, ServiceVessel> getServiceVesselDetail() throws MalformedURLException, IOException{
+    public ArrayList<ServiceVessel> getServiceVesselDetail() throws MalformedURLException, IOException{
 
         URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselDetail");
         URLConnection conn = blackbox.openConnection();
@@ -44,6 +53,7 @@ public class ServiceVesselDAO {
                 if (name.equals("Result")) {
                     
                     serviceVesselMap = readServiceVesselDetail(jsonReader, serviceVesselMap);
+                    mapToList();
                 }
                 if (name.equals("Status")){
                     String status = jsonReader.nextString();
@@ -56,10 +66,10 @@ public class ServiceVesselDAO {
             
             jsonReader.endObject();
         }
-        return serviceVesselMap;
+        return serviceVessels;
     }
     
-    public static HashMap<String, ServiceVessel> readServiceVesselDetail(JsonReader jsonReader, HashMap<String, ServiceVessel> serviceVesselMap) throws IOException{
+    public HashMap<String, ServiceVessel> readServiceVesselDetail(JsonReader jsonReader, HashMap<String, ServiceVessel> serviceVesselMap) throws IOException{
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String mmsi = jsonReader.nextName();
@@ -96,7 +106,7 @@ public class ServiceVesselDAO {
     //getServiceVesselStatus()
     //<editor-fold defaultstate="collapsed" desc="getServiceVesselStatus()">
     
-    public static HashMap<String, ServiceVessel> getServiceVesselStatus() throws MalformedURLException, IOException{
+    public HashMap<String, ServiceVessel> getServiceVesselStatus() throws MalformedURLException, IOException{
         URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselStatus");
         URLConnection conn = blackbox.openConnection();
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -125,7 +135,7 @@ public class ServiceVesselDAO {
         return serviceVesselMap;
     }
     
-    public static HashMap<String, ServiceVessel> readServiceVesselStatus(JsonReader jsonReader, HashMap<String, ServiceVessel> serviceVesselMap) throws IOException{
+    public HashMap<String, ServiceVessel> readServiceVesselStatus(JsonReader jsonReader, HashMap<String, ServiceVessel> serviceVesselMap) throws IOException{
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String mmsi = jsonReader.nextName();
@@ -164,7 +174,7 @@ public class ServiceVesselDAO {
     //getServiceVesselStatistics()
     //<editor-fold defaultstate="collapsed" desc="getServiceVesselStatistics()">
     
-    public static HashMap<String, ServiceVessel> getServiceVesselStatistics() throws MalformedURLException, IOException{
+    public HashMap<String, ServiceVessel> getServiceVesselStatistics() throws MalformedURLException, IOException{
 
         URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselStatistics");
         URLConnection conn = blackbox.openConnection();
@@ -194,7 +204,7 @@ public class ServiceVesselDAO {
         return serviceVesselMap;
     }
     
-    public static HashMap<String, ServiceVessel> readServiceVesselStatistics(JsonReader jsonReader, HashMap<String, ServiceVessel> serviceVesselMap) throws IOException{
+    public HashMap<String, ServiceVessel> readServiceVesselStatistics(JsonReader jsonReader, HashMap<String, ServiceVessel> serviceVesselMap) throws IOException{
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String mmsi = jsonReader.nextName();
@@ -258,7 +268,7 @@ public class ServiceVesselDAO {
     //getServiceVesselDetailByMMSI()
     //<editor-fold defaultstate="collapsed" desc="getServiceVesselDetailByMMSI()">
     
-    public static ServiceVessel getServiceVesselDetailByMMSI(String mmsi) throws MalformedURLException, IOException{
+    public ServiceVessel getServiceVesselDetailByMMSI(String mmsi) throws MalformedURLException, IOException{
 
         URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselDetail?mmsi=" + mmsi);
         URLConnection conn = blackbox.openConnection();
@@ -288,7 +298,7 @@ public class ServiceVesselDAO {
         return serviceVessel;
     }
     
-    public static ServiceVessel readServiceVesselDetailByMMSI(JsonReader jsonReader, ServiceVessel serviceVessel) throws IOException{
+    public ServiceVessel readServiceVesselDetailByMMSI(JsonReader jsonReader, ServiceVessel serviceVessel) throws IOException{
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String mmsi = jsonReader.nextName();
@@ -325,7 +335,7 @@ public class ServiceVesselDAO {
     //getServiceVesselStatusByMMSI()
     //<editor-fold defaultstate="collapsed" desc="getServiceVesselStatusByMMSI()">
     
-    public static ServiceVessel getServiceVesselStatusByMMSI(String mmsi) throws MalformedURLException, IOException{
+    public ServiceVessel getServiceVesselStatusByMMSI(String mmsi) throws MalformedURLException, IOException{
 
         URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselStatus?mmsi=" + mmsi);
         URLConnection conn = blackbox.openConnection();
@@ -355,7 +365,7 @@ public class ServiceVesselDAO {
         return serviceVessel;
     }
     
-    public static ServiceVessel readServiceVesselStatusByMMSI(JsonReader jsonReader, ServiceVessel serviceVessel) throws IOException{
+    public ServiceVessel readServiceVesselStatusByMMSI(JsonReader jsonReader, ServiceVessel serviceVessel) throws IOException{
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String mmsi = jsonReader.nextName();
@@ -392,7 +402,7 @@ public class ServiceVesselDAO {
     //getServiceVesselStatisticsByMMSI()
     //<editor-fold defaultstate="collapsed" desc="getServiceVesselStatisticsByMMSI()">
     
-    public static ServiceVessel getServiceVesselStatisticsByMMSI(String mmsi) throws MalformedURLException, IOException{
+    public ServiceVessel getServiceVesselStatisticsByMMSI(String mmsi) throws MalformedURLException, IOException{
 
         URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselStatistics?mmsi=" + mmsi);
         URLConnection conn = blackbox.openConnection();
@@ -422,7 +432,7 @@ public class ServiceVesselDAO {
         return serviceVessel;
     }
     
-    public static ServiceVessel readServiceVesselStatisticsByMMSI(JsonReader jsonReader, ServiceVessel serviceVessel) throws IOException{
+    public ServiceVessel readServiceVesselStatisticsByMMSI(JsonReader jsonReader, ServiceVessel serviceVessel) throws IOException{
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String mmsi = jsonReader.nextName();
@@ -459,7 +469,7 @@ public class ServiceVesselDAO {
     //helper methods
     //<editor-fold defaultstate="collapsed" desc="helper methods">
     
-    public static void readWarnings(JsonReader rd) throws IOException{
+    public void readWarnings(JsonReader rd) throws IOException{
         ArrayList<String> warnings = new ArrayList<>();
         rd.beginArray();
         while (rd.hasNext()){
@@ -470,7 +480,7 @@ public class ServiceVesselDAO {
         
     }
     
-    public static float[] readLocation(JsonReader rd) throws IOException{
+    public float[] readLocation(JsonReader rd) throws IOException{
         float[] location = new float[2];
         rd.beginArray();
         int counter = 0;
