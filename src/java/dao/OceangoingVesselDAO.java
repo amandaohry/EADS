@@ -24,7 +24,7 @@ public class OceangoingVesselDAO {
     //public ArrayList<OceangoingVessel> ogvList;
     //public static ArrayList<OceangoingVessel> oceanGoingVessel;
     
-    public ArrayList<OceangoingVessel> getVessels() throws MalformedURLException, IOException{
+    public ArrayList<OceangoingVessel> getVesselDetail() throws MalformedURLException, IOException{
         ArrayList<OceangoingVessel> ogv = new ArrayList<>();
         
         URL blackbox = new URL("http://127.0.0.1:8080/getVesselDetail");
@@ -69,6 +69,42 @@ public class OceangoingVesselDAO {
         
     }
     
+   public ArrayList<OceangoingVessel> getVesselStatus() throws MalformedURLException, IOException{
+        ArrayList<OceangoingVessel> ogv = new ArrayList<>();
+        
+        URL blackbox = new URL("http://127.0.0.1:8080/getVesselStatus");
+        URLConnection conn = blackbox.openConnection();
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream())); 
+        ArrayList<OceangoingVessel> oceangoingVessel = new ArrayList<>();
+        
+        try(JsonReader jsonReader = new JsonReader(in)){
+            jsonReader.beginObject();
+            while (jsonReader.hasNext()) {
+                
+                String name = jsonReader.nextName();
+                System.out.println("name = " + name);
+                if (name.equals("Result")) {
+                    
+                    oceangoingVessel = readOceanGoingVesselDetail(jsonReader, oceangoingVessel);
+                }
+                if (name.equals("Status")){
+                    String status = jsonReader.nextString();
+                }
+                if (name.equals("Warnings")){
+                    readWarnings(jsonReader);
+                }
+                jsonReader.endObject();
+        }
+         
+         
+        return ogv;
+    }
+        
+        
+    }
+    
+   
+   
     public ArrayList<OceangoingVessel> readOceanGoingVesselDetail(JsonReader jsonReader, ArrayList<OceangoingVessel> oceanGoingVessel) throws  IOException{
         jsonReader.beginObject();
         while(jsonReader.hasNext()){
@@ -110,5 +146,66 @@ public class OceangoingVesselDAO {
         }
         jsonReader.endObject();
         return oceanGoingVessel;
+    }
+    
+    public OceangoingVessel readOceanGoingVesselStatus(JsonReader jsonReader, OceangoingVessel vessel) throws  IOException{
+        OceangoingVessel oceangoingVessel = null;
+        jsonReader.beginObject();
+        while(jsonReader.hasNext()){
+            String mmsi = jsonReader.nextName();
+            System.out.println(mmsi);
+            jsonReader.beginObject();
+            float[] location = new float[2];
+            String locName = "";
+            float speed = 0;
+            float direction = 0;
+            float eta = 0;
+            String destination = "";
+            String status = "";
+            
+            while(jsonReader.hasNext()){
+                String name = jsonReader.nextName();
+                System.out.println("name " + name);
+                if(name.equals("Location")){
+                    location = readLocation(jsonReader);
+                }
+                if(name.equals("LocName")){
+                    locName = jsonReader.nextString();
+                }
+                if(name.equals("Speed")){
+                    speed = (float) jsonReader.nextDouble();
+                }
+                if(name.equals("Direction")){
+                    direction = (float) jsonReader.nextDouble();
+                }
+                if(name.equals("ETA")){
+                    eta = (float)jsonReader.nextDouble();
+                }
+                if(name.equals("Destination")){
+                    destination = jsonReader.nextString();
+                }
+                if(name.equals("Status")){
+                    status = jsonReader.nextString();
+                }
+            }
+            oceangoingVessel  = new OceangoingVessel(mmsi, location, locName, speed, direction, eta, destination, status );
+            
+            jsonReader.endObject();
+        }
+        jsonReader.endObject();
+        return oceangoingVessel;
+    }
+    
+    
+    public float[] readLocation(JsonReader rd) throws IOException{
+        float[] location = new float[2];
+        rd.beginArray();
+        int counter = 0;
+        while (rd.hasNext()){
+            location[counter] = (float) rd.nextDouble();
+            counter++;
+        }
+        rd.endArray();
+        return location;
     }
 }
