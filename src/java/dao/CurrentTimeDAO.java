@@ -31,7 +31,7 @@ public class CurrentTimeDAO {
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("line 38: name = " + name);
+                System.out.println(" name = " + name);
                 if (name.equals("Result")) {
                     
                     time = read(jsonReader, time);

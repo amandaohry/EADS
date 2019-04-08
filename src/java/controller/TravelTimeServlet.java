@@ -5,23 +5,22 @@
  */
 package controller;
 
-import dao.ServiceDAO;
-import entity.Service;
-import java.util.*;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import utility.TimeUtility;
 
 /**
  *
  * @author aquil
  */
-@WebServlet(name = "ServiceServlet", urlPatterns = {"/ServiceServlet"})
-public class ServiceServlet extends HttpServlet {
+@WebServlet(name = "TravelTimeServlet", urlPatterns = {"/TravelTimeServlet"})
+public class TravelTimeServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -34,20 +33,14 @@ public class ServiceServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
+        String source = request.getParameter("source");
+        String destination = request.getParameter("destination");
+        String mmsi = request.getParameter("mmsi");
+        int travelTime = TimeUtility.getTravelTime(source, destination, mmsi); 
         
+        request.setAttribute("travelTime", travelTime); //with setAttribute() you can define a "key" and value pair so that you can get it in future using getAttribute("key")
         
-        
-        HashMap<String,ArrayList<Service>> serviceMap = ServiceDAO.getServiceDetail(); //Calling getServiceDetail() function
-        
-        HashMap<String, ArrayList<Service>> serviceMap2 = ServiceDAO.getServiceStatus(); //Calling getServiceStatus() function
-
-        
-        request.setAttribute("serviceMap", serviceMap);
-        request.setAttribute("serviceMap2", serviceMap2);
-        
-        
-        request.getRequestDispatcher("/Service.jsp").forward(request, response);
+        request.getRequestDispatcher("/index.jsp").forward(request, response);//RequestDispatcher is used to send the control to the invoked page.
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
