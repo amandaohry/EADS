@@ -11,7 +11,7 @@ package entity;
  */
 public class Service {
     //static variables
-    public int mmsi;
+    public String mmsi;
     public String requestID;
     public String requestTime; //time of request
     public float[] location; //service location in longitude, latitude
@@ -24,7 +24,7 @@ public class Service {
     public String status; //current status of servicing: "not started" / "waiting" / "on-going" / "completed"
     
     //constructor
-    public Service(int mmsi, String requestID, String requestTime, float[] location, String time, int requestedFuel){
+    public Service(String mmsi, String requestID, String requestTime, float[] location, String time, int requestedFuel){
         this.mmsi = mmsi;
         this.requestID = requestID;
         this.requestTime = requestTime;
@@ -33,7 +33,7 @@ public class Service {
         this.requestedFuel = requestedFuel;
     }
     
-    public Service(int mmsi, String requestID, String requestTime, float[] location, String time, int requestedFuel, float timeDelay, float fuelReceived, String status){
+    public Service(String mmsi, String requestID, String requestTime, float[] location, String time, int requestedFuel, float timeDelay, float fuelReceived, String status){
         this.mmsi = mmsi;
         this.requestID = requestID;
         this.requestTime = requestTime;
@@ -46,7 +46,7 @@ public class Service {
     }
     
     //getters
-    public int getMMSI(){
+    public String getMMSI(){
         return this.mmsi;
     }
     public String getRequestID(){

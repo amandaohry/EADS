@@ -58,6 +58,52 @@ public class ServiceDAO {
        return serviceMap;
     }
     
+    public HashMap<String, Service> readServiceDetail(JsonReader jsonReader, HashMap<String, Service> serviceMap) throws IOException{
+        jsonReader.beginObject();
+        while (jsonReader.hasNext()) {
+            String requestID = jsonReader.nextName();
+            System.out.println(requestID);
+            jsonReader.beginObject();
+            int fuelRequired = 0;
+            String locName = "";
+            float[] location = new float[2];
+            String mmsi = "";
+            String timePosted = "";
+            String timeRequested = "";
+            while (jsonReader.hasNext()) {
+                
+                String name = jsonReader.nextName();
+                System.out.println("name: " + name);
+                if (name.equals("FuelRequired")){
+                    fuelRequired = jsonReader.nextInt();
+                    System.out.println("fuelRequired: " + fuelRequired);
+                }
+                if (name.equals("LocName")){
+                    locName = jsonReader.nextString();
+                }
+                if (name.equals("Location")){
+                    location = readLocation(jsonReader);
+                }
+                if (name.equals("MMSI")){
+                    mmsi = jsonReader.nextString();
+                }
+                if (name.equals("TimePosted")){
+                    timePosted = jsonReader.nextString();
+                }
+                if (name.equals("TimeRequested")){
+                    timeRequested = jsonReader.nextString();
+                }
+                
+            }
+            Service service = new Service(mmsi, requestID, timeRequested, location, timePosted, fuelRequired);
+            serviceMap.put(requestID, service);
+            jsonReader.endObject();
+        }
+        jsonReader.endObject();
+        return serviceMap;
+    }
+    
+    
     //getServiceDetail helper methods
     //<editor-fold defaultstate="collapsed" desc="unfold to see getServiceDetail() helper methods">
     public void readWarnings(JsonReader rd) throws IOException{
@@ -82,52 +128,6 @@ public class ServiceDAO {
         rd.endArray();
         return location;
     }
-    
-    public HashMap<String, Service> readServiceDetail(JsonReader jsonReader, HashMap<String, Service> serviceMap) throws IOException{
-        jsonReader.beginObject();
-        while (jsonReader.hasNext()) {
-            String requestID = jsonReader.nextName();
-            System.out.println(requestID);
-            jsonReader.beginObject();
-            int fuelRequired = 0;
-            String locName = "";
-            float[] location = new float[2];
-            int mmsi = 0;
-            String timePosted = "";
-            String timeRequested = "";
-            while (jsonReader.hasNext()) {
-                
-                String name = jsonReader.nextName();
-                System.out.println("name: " + name);
-                if (name.equals("FuelRequired")){
-                    fuelRequired = jsonReader.nextInt();
-                    System.out.println("fuelRequired: " + fuelRequired);
-                }
-                if (name.equals("LocName")){
-                    locName = jsonReader.nextString();
-                }
-                if (name.equals("Location")){
-                    location = readLocation(jsonReader);
-                }
-                if (name.equals("MMSI")){
-                    mmsi = jsonReader.nextInt();
-                }
-                if (name.equals("TimePosted")){
-                    timePosted = jsonReader.nextString();
-                }
-                if (name.equals("TimeRequested")){
-                    timeRequested = jsonReader.nextString();
-                }
-                
-            }
-            Service service = new Service(mmsi, requestID, timeRequested, location, timePosted, fuelRequired);
-            serviceMap.put(requestID, service);
-            jsonReader.endObject();
-        }
-        jsonReader.endObject();
-        return serviceMap;
-    }
-    
 //</editor-fold>
     
     //
@@ -200,8 +200,6 @@ public class ServiceDAO {
             service.setFuelReceived(fuelReceived);
             service.setStatus(status);
             service.setTimeDelay(timeWaited);
-            
-
         }
         jsonReader.endObject();
         return serviceMap;

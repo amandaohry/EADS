@@ -11,100 +11,99 @@ package entity;
  */
 public class ServiceVessel {
     //static information
-//    public static int staticMmsi;
-//    public static String vesselName;
-//    public static float capacity;
-//    public static float pumpRate;
-//    public static float cruiseSpeed;
-    public int mmsi;
-    public String vesselName;
-    public float capacity;
-    public float pumpRate;
-    public float cruiseSpeed;
+    public String mmsi;
+//    public String vesselName;
+    public int capacity;
+    public int pumpRate;
+//    public float cruiseSpeed;
     
     //dynamic information
     
-    public float currentCapacity;
-    public float[] location;
-    public float currentSpeed;
-    public float[] currentDestination;
-    public float eta;
+    public int currentCapacity;
+//    public float[] location;
+//    public float currentSpeed;
+//    public float[] currentDestination;
+//    public float eta;
     public String status;
     
+    //service vessel statistics
+    public int distance;
+    public int driftCost;
+    public int driftTime;
+    public int fuelDelivered;
+    public int grossProfit;
+    public float operCost;
+    
     //constructors
-    
-    public ServiceVessel(int mmsi, String vesselName, float capacity, float pumpRate, float cruiseSpeed){
+    public ServiceVessel(String mmsi, int capacity, int pumpRate){
         this.mmsi = mmsi;
-        this.vesselName = vesselName;
         this.capacity = capacity;
         this.pumpRate = pumpRate;
-        this.cruiseSpeed = cruiseSpeed;
     }
     
-    public ServiceVessel(int mmsi, String vesselName, float capacity, float pumpRate, float cruiseSpeed, float currentCapacity, 
-            float[] location, float currentSpeed, float[] currentDestination, float eta, String status ){
-        this.mmsi = mmsi;
-        this.vesselName = vesselName;
-        this.capacity = capacity;
-        this.pumpRate = pumpRate;
-        this.cruiseSpeed = cruiseSpeed;
-        this.currentCapacity = currentCapacity;
-    }
     
     //getters
     //<editor-fold defaultstate="collapsed" desc="UNFOLD TO SEE GETTERS">
-    public int getMMSI(){
+    public String getMMSI(){
         return this.mmsi;
     }
-    public float getCapacity(){
+    public int getCapacity(){
         return this.capacity;
     }
-    public float getPumpRate(){
+    public int getPumpRate(){
         return this.pumpRate;
-    }
-    public float getCruiseSpeed(){
-        return this.cruiseSpeed;
     }
     public float getCurrentCapacity(){
         return this.currentCapacity;
     }
-    public float[] getLocation(){
-        return this.location;
-    }
-    public float getCurrentSpeed(){
-        return this.currentSpeed;
-    }
-    public float[] getCurrentDestination(){
-        return this.currentDestination;
-    }
-    public float getEta(){
-        return this.eta;
-    }
     public String getStatus(){
         return this.status;
+    }
+    public int getDistance(){
+        return this.distance;
+    }
+    public int getDriftTime(){
+        return this.driftTime;
+    }
+    public int getDriftCost(){
+        return this.driftCost;
+    }
+    public int getFuelDelivered(){
+        return this.fuelDelivered;
+    }
+    public int getGrossProfit(){
+        return this.grossProfit;
+    }
+    public float getOperCost(){
+        return this.operCost;
     }
 //</editor-fold>
     
     //setters - you can only set dynamic attributes
-    
     //<editor-fold defaultstate="collapsed" desc="UNFOLD TO SEE SETTERS">
-    public void setCurrentCapacity(float currentCapacity){
+    public void setCurrentCapacity(int currentCapacity){
         this.currentCapacity = currentCapacity;
-    }
-    public void setLocation(float[] location){
-        this.location = location;
-    }
-    public void setCurrentSpeed(float currentSpeed){
-        this.currentSpeed = currentSpeed;
-    }
-    public void setCurrentDestination(float[] currentDestination){
-        this.currentDestination = currentDestination;
-    }
-    public void setEta(float eta){
-        this.eta = eta;
     }
     public void setStatus(String status){
         this.status = status;
+    }
+    public void setDistance(int distance){
+        this.distance = distance;
+    }
+    public void setDriftCost(int driftCost){
+        this.driftCost = driftCost;
+    }
+    public void setDriftTime(int driftTime){
+        this.driftTime = driftTime;
+    }
+    public void setFuelDelivered(int fuelDelivered){
+        this.fuelDelivered = fuelDelivered;
+    }
+    public void setGrossProfit(int grossProfit){
+        this.grossProfit = grossProfit;
+    }
+    public void setOperCost(float operCost){
+        this.operCost = operCost;
     }
 //</editor-fold>
     
