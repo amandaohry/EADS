@@ -18,7 +18,13 @@ public class OceangoingVessel {
     public float LengthOfVessel;
     public String vesselName;
     public int Weight;
-    
+    public float[] location;
+    public String locName;
+    public float speed;
+    public float direction;
+    public float ETA;
+    public String destination;
+    public String status;
     
     //constructors
     public OceangoingVessel(String mmsi, String vesselName){
@@ -35,6 +41,41 @@ public class OceangoingVessel {
         this.LengthOfVessel = LengthOfVessel;
         this.Weight = Weight;
         
+    }
+    
+    public OceangoingVessel(String mmsi, float[] location, String locName, float speed, float direction, float ETA, String destination, String status){
+        this.mmsi = mmsi;
+        this.location = location;
+        this.locName = locName;
+        this.speed = speed;
+        this.direction = direction;
+        this.ETA = ETA;
+        this.destination = destination;
+        this.status = status;
+    }
+    
+    
+    //getters for vessel status
+    public float[] getLocation(){
+        return this.location;
+    }
+    public String getLocName(){
+        return this.locName;
+    }
+    public float getSpeed(){
+        return this.speed;
+    }
+    public float direction(){
+        return this.direction;
+    }
+    public float getETA(){
+        return this.ETA;
+    }
+    public String getDestination(){
+        return this.destination;
+    }
+    public String getStatus(){
+        return this.status;
     }
     
     //getters
