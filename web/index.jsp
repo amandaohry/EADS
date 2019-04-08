@@ -28,7 +28,6 @@
             <p>provides the current simulation time at the time of inquiry.</p>
             <button type="submit" class="btn btn-amber">Get Current Time</button>
         </form>
-  		
         <%                            
             if (!time.equals("")) {
         %>
@@ -36,7 +35,28 @@
         <%
             }
         %>
-
+        
+        <%
+            int travelTime = 0;
+            if (request.getAttribute("travelTime") != null) {
+                travelTime = (int) request.getAttribute("travelTime");
+            }
+        %> 
+        <form action='TravelTimeServlet' method='get' name ="TravelTimeServlet">
+            <h3>Get Travel Time</h3>
+            <p>provides predicted vessel travel time from source, destination and vessel information. Source and destination may be provided as <Longitude>,<Latitude> or <Location Name> or <Service Request ID>. Vessel information is used for routing, taking into account vessel properties when calculating travel time.</p>
+            Source: <input type="text" id="source" class="form-control" name='source'><br>
+            Destination: <input type="text" id="destination" class="form-control" name='destination'><br>
+            MMSI: <input type="text" id="mmsi" class="form-control" name='mmsi'><br>
+            <button type="submit" class="btn btn-amber">Get Travel Time</button>
+        </form>
+        <%                            
+            if (travelTime!=0) {
+        %>
+        <h4 class="text-center red-text"><%=travelTime%></h4>
+        <%
+            }
+        %>
         
         <form action='ServiceServlet' method='get' name ="ServiceServlet">
        

@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import entity.Service;
 import entity.ServiceVessel;
+import java.net.MalformedURLException;
 import java.util.Calendar;
 
 /*
@@ -47,8 +48,6 @@ public class TimeUtility{
     
     //get the current time in the simulation
     public static Date getCurrentTime() throws FileNotFoundException, IOException, ParseException{
-        //Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        JsonObject jsonOutput = new JsonObject();
         URL blackbox = new URL("http://127.0.0.1:8080/getCurrentTime");
         URLConnection conn = blackbox.openConnection();
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -133,5 +132,50 @@ public class TimeUtility{
     }
 //</editor-fold>
     
+    //getTravelTime?src=<Source>&dst=<Destination>&vsl=<MMSI>
+    public static int getTravelTime(String source, String destination, String mmsi) throws MalformedURLException, IOException{
+        URL blackbox = new URL("http://127.0.0.1:8080/getTravelTime?src=" + source + "&dst=" + destination + "&vsl=" + mmsi);
+        URLConnection conn = blackbox.openConnection();
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        
+        int minutes = 0;
+        try (JsonReader jsonReader = new JsonReader(in)) {
+            jsonReader.beginObject();
+            while (jsonReader.hasNext()) {
+                
+                String name = jsonReader.nextName();
+                System.out.println("name = " + name);
+                if (name.equals("Result")) {
+                    
+                    minutes = readTravelTime(jsonReader, minutes);
+                    System.out.println("time: " + minutes);
+                }
+                if (name.equals("Status")){
+                    System.out.println(jsonReader.nextString());
+                }
+                if (name.equals("Warnings")){
+                    readWarnings(jsonReader);
+                }
+            }
+                
+            
+            jsonReader.endObject();
+        }
+        return minutes;
+    }
     
+    public static int readTravelTime(JsonReader jsonReader, int minutes) throws IOException{
+        jsonReader.beginObject();
+        while (jsonReader.hasNext()) {
+            String name = jsonReader.nextName();
+            System.out.println(name);
+            if (name.equals("TravelTime")){
+                minutes = jsonReader.nextInt();
+                System.out.println("travel time: " + minutes);
+            }
+        }
+        jsonReader.endObject();
+        System.out.println("about to return the time");
+        return minutes;
+    }
 }
