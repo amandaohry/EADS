@@ -29,20 +29,19 @@ public class model {
 	public static Date currentTime;
 	public static IloNumVar[] b;
 	
-	public static void run() throws IOException {
-		while (true) {//TODO: run every few minutes
+//	public static void run() throws IOException {
+	public static void main(String[] args) throws IOException{
+//		while (true) {//TODO: run every few minutes
 			ServiceVesselDAO serviceVesselDao = new ServiceVesselDAO();
 			serviceVessels = serviceVesselDao.getServiceVesselDetail();
 			ServiceDAO serviceDao = new ServiceDAO();
 			services = serviceDao.getServiceDetail();
-			String[] locations = getLocationList(); //loation list of lat and long
-			String[] mmsi = getBBList(); //list of bunker barges mmsi (unique id)
 			
 			//TODO: remove waiting time at depot
 			currentTime = TimeUtility.getCurrentTime();
-			int numS = 0; //number of services (including depot)
-			int numK = 0; //number of bunker barges
-			int numT = 0; //number of trips TODO: set it to fixed?
+			int numS = services.size(); //number of services (including depot)
+			int numK = serviceVessels.size(); //number of bunker barges
+			int numT = 2; //number of trips TODO: set it to fixed?
 			try{
 				IloCplex cplex = new IloCplex();
 		        // create model and solve it
@@ -147,7 +146,9 @@ public class model {
 				        		expr.addTerm(1.0, b[j]);
 				        		expr.addTerm(-1.0, b[i]);
 				        		expr.addTerm(-M, x[i][j][k][t]);
-				        		cplex.addGe(expr, getServiceTime(i, k) + getTravelTime(i, j, k) - M);
+				        		int value = getServiceTime(i, k) + getTravelTime(i, j, k) - M;
+				        		System.out.println("value!!!" + value);
+				        		cplex.addGe(expr, value);
 				        	}
 		        		}
 		        	}
@@ -177,19 +178,32 @@ public class model {
 		        		}
 		        	}
 		        }
-		        
-		        
+//		        cplex.setParam(IloCplex.Param.MIP.Strategy.Search, IloCplex.MIPSearch.Traditional);
+		        if ( cplex.solve() ) {
+		           System.out.println("Solution status = " + cplex.getStatus());
+		           System.out.println("Solution value  = " + cplex.getObjValue());
+		           System.out.println();
+		           System.out.println(" cost = " + cplex.getObjValue());
+		           for (int k = 0; k < numK; k++){
+			        	for (int t = 0; t < numT; t++){
+			        		for (int i=0; i<numS; i++){
+					        	for (int j=0; j<numS; j++){
+					        		System.out.println(" x" + i + j + k + t + " ="  + 
+			                                cplex.getValue(x[i][j][k][t]));
+					        	}
+			        		}
+			        	}
+			        }
+		           System.out.println();
+		        }
+		        cplex.end();
 		        
 			} catch (IloException e) {
 		        System.err.println("Concert exception caught: " + e);
 		    }
 	        System.out.println("Successfully Run");
 	        
-		}
-	}
-
-	private static ArrayList<Service> processRequests(String[] requestsRaw) {
-		return null;
+//		}
 	}
 
 	public static Date getCurrentTime(){
@@ -204,29 +218,15 @@ public class model {
 
 	}	
 
-	public static String[] getLocationList(){
-		return null;
-		//get a list of service locations (isServiceLocation = True) from api getLocationList method
-
-	}
-
-	public static String[] getServiceList(){
-		return null;
-		//get a list of service requests id from api getService method
-
-	}
-
-	public static String[] getBBList(){
-		return null;
-		//get a list of bunker barges mmsi from api getVessel method
-
-	}
 
 	public static int getTravelTime (int i, int j, int k){
 		//get travelling time of bunker barge k btwn request i and j from api getTravelTime method
 		//firstly get lat and lon of location in requrest i, j
 		String iRequestId = services.get(i).getRequestID();
 		String jRequestId = services.get(i).getRequestID();
+		if (iRequestId == jRequestId) {
+			return 0;
+		}
 		String mmsi = serviceVessels.get(k).getMMSI();
 		//then request from api the travel time in minutes
 		return TimeUtility.getTravelTime(iRequestId, jRequestId, mmsi);

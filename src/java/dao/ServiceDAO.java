@@ -29,7 +29,7 @@ public class ServiceDAO {
 	public static SimpleDateFormat format = new SimpleDateFormat("YYYY-mm-dd HH:MM:SS");  
     private HashMap<String, ArrayList<Service>> serviceMap = new HashMap<String, ArrayList<Service>>();
     final private  int SMALLEST_CAPACITY = 825;
-    private ArrayList<Service> services;
+    private ArrayList<Service> services = new ArrayList<Service>();
     private ArrayList<Service> serviceList;//sub list (for internal usage)
     //getServiceDetail()
     //<editor-fold defaultstate="collapsed" desc="getServiceDetail()">
@@ -56,7 +56,7 @@ public class ServiceDAO {
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("line 38: name = " + name);
+//                System.out.println("line 38: name = " + name);
                 if (name.equals("Result")) {
                     serviceMap = readServiceDetail(jsonReader, serviceMap);
                     mapToList();
@@ -90,10 +90,10 @@ public class ServiceDAO {
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("name: " + name);
+//                System.out.println("name: " + name);
                 if (name.equals("FuelRequired")){
                     fuelRequired = jsonReader.nextInt();
-                    System.out.println("fuelRequired: " + fuelRequired);
+//                    System.out.println("fuelRequired: " + fuelRequired);
                 }
                 if (name.equals("LocName")){
                     locName = jsonReader.nextString();
@@ -197,7 +197,7 @@ public class ServiceDAO {
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String requestID = jsonReader.nextName();
-            System.out.println(requestID);
+//            System.out.println(requestID);
             int fuelReceived = 0;
             String status = "";
             int timeElapsed = 0;
@@ -205,21 +205,21 @@ public class ServiceDAO {
             jsonReader.beginObject();
             while(jsonReader.hasNext()){
                 String name = jsonReader.nextName();
-                System.out.println("name: " + name);
+//                System.out.println("name: " + name);
                 if(name.equals("FuelReceived")){
-                    System.out.println("FuelReceived: " + fuelReceived);
+//                    System.out.println("FuelReceived: " + fuelReceived);
                     fuelReceived = jsonReader.nextInt();
                 }
                 if(name.equals("Status")){
-                    System.out.println("status : " + status);
+//                    System.out.println("status : " + status);
                     status = jsonReader.nextString();
                 }
                 if(name.equals("TimeElapsed")){
-                    System.out.println("timeElapsed : " + timeElapsed);
+//                    System.out.println("timeElapsed : " + timeElapsed);
                     timeElapsed = jsonReader.nextInt();
                 }
                 if(name.equals("TimeWaited")){
-                    System.out.println("timeWaited : " + timeWaited);
+//                    System.out.println("timeWaited : " + timeWaited);
                     timeWaited = jsonReader.nextInt();
                 }
             }
@@ -252,7 +252,7 @@ public class ServiceDAO {
     //getServiceDetailByRequestID(String requestID)
     //<editor-fold defaultstate="collapsed" desc="getServiceDetailByRequestID(String requestID)">
     public  ArrayList<Service> getServiceDetailByRequestID(String requestID) throws IOException{
-        System.out.println("getServiceDetailByRequestID(String requestID) is called");
+//        System.out.println("getServiceDetailByRequestID(String requestID) is called");
         URL blackbox = new URL("http://localhost:8080/getServiceDetail?id=" + requestID);
         URLConnection conn = blackbox.openConnection();
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -262,7 +262,7 @@ public class ServiceDAO {
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("name = " + name);
+//                System.out.println("name = " + name);
                 if (name.equals("Result")) {
                     serviceList = readServiceDetailByRequestID(jsonReader, serviceList);
                 }
@@ -283,7 +283,7 @@ public class ServiceDAO {
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String requestID = jsonReader.nextName();
-            System.out.println(requestID);
+//            System.out.println(requestID);
             jsonReader.beginObject();
             int fuelRequired = 0;
             String locName = "";
@@ -294,10 +294,10 @@ public class ServiceDAO {
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("name: " + name);
+//                System.out.println("name: " + name);
                 if (name.equals("FuelRequired")){
                     fuelRequired = jsonReader.nextInt();
-                    System.out.println("fuelRequired: " + fuelRequired);
+//                    System.out.println("fuelRequired: " + fuelRequired);
                 }
                 if (name.equals("LocName")){
                     locName = jsonReader.nextString();
@@ -331,7 +331,7 @@ public class ServiceDAO {
     //<editor-fold defaultstate="collapsed" desc="getServiceStatusByRequestID(String requestID)">
     
     public  ArrayList<Service> getServiceStatusByRequestID(String requestID) throws IOException{
-        System.out.println("getServiceStatusByRequestID(String requestID) is called");
+//        System.out.println("getServiceStatusByRequestID(String requestID) is called");
         URL blackbox = new URL("http://localhost:8080/getServiceStatus?id=" + requestID);
         URLConnection conn = blackbox.openConnection();
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -341,7 +341,7 @@ public class ServiceDAO {
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("name = " + name);
+//                System.out.println("name = " + name);
                 if (name.equals("Result")) {
                     serviceList = readServiceStatusByRequestID(jsonReader, serviceList);
                 }
@@ -362,7 +362,7 @@ public class ServiceDAO {
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String requestID = jsonReader.nextName();
-            System.out.println(requestID);
+//            System.out.println(requestID);
             int fuelReceived = 0;
             String status = "";
             int timeElapsed = 0;
@@ -370,7 +370,7 @@ public class ServiceDAO {
             jsonReader.beginObject();
             while(jsonReader.hasNext()){
                 String name = jsonReader.nextName();
-                System.out.println("name: " + name);
+//                System.out.println("name: " + name);
                 if(name.equals("FuelReceived")){
                     System.out.println("FuelReceived: " + fuelReceived);
                     fuelReceived = jsonReader.nextInt();
@@ -380,7 +380,7 @@ public class ServiceDAO {
                     status = jsonReader.nextString();
                 }
                 if(name.equals("TimeElapsed")){
-                    System.out.println("timeElapsed : " + timeElapsed);
+//                    System.out.println("timeElapsed : " + timeElapsed);
                     timeElapsed = jsonReader.nextInt();
                 }
                 if(name.equals("TimeWaited")){

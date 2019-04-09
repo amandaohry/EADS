@@ -36,15 +36,15 @@ public class ServiceByRequestIDServlet extends HttpServlet {
             throws ServletException, IOException {
         String requestID = request.getParameter("requestID");
                 
-        ArrayList<Service> serviceByRequestIDList = ServiceDAO.getServiceDetailByRequestID(requestID); //Calling getServiceDetail() function
-        if (serviceByRequestIDList!=null){
-            System.out.println(serviceByRequestIDList.get(0));
-        }
-        ArrayList<Service> serviceByRequestIDList2 = ServiceDAO.getServiceStatusByRequestID(requestID); //Calling getServiceStatus() function
-
-        request.setAttribute("serviceByRequestIDList", serviceByRequestIDList); 
-        request.setAttribute("serviceByRequestIDList2", serviceByRequestIDList2);
-        
+//        ArrayList<Service> serviceByRequestIDList = ServiceDAO.getServiceDetailByRequestID(requestID); //Calling getServiceDetail() function
+//        if (serviceByRequestIDList!=null){
+//            System.out.println(serviceByRequestIDList.get(0));
+//        }
+//        ArrayList<Service> serviceByRequestIDList2 = ServiceDAO.getServiceStatusByRequestID(requestID); //Calling getServiceStatus() function
+//
+//        request.setAttribute("serviceByRequestIDList", serviceByRequestIDList); 
+//        request.setAttribute("serviceByRequestIDList2", serviceByRequestIDList2);
+//        
         
         request.getRequestDispatcher("/ServiceByRequestID.jsp").forward(request, response);
     }
@@ -78,7 +78,7 @@ public class ServiceByRequestIDServlet extends HttpServlet {
         processRequest(request, response);
     }
 
-    /**
+    /** 
      * Returns a short description of the servlet.
      *
      * @return a String containing servlet description

@@ -68,14 +68,14 @@ public class TimeUtility{
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("name = " + name);
+//                System.out.println("line 38: name = " + name);
                 if (name.equals("Result")) {
                     
                     time = read(jsonReader, time);
-                    System.out.println("time: " + time);
+//                    System.out.println("time: " + time);
                 }
                 if (name.equals("Status")){
-                    System.out.println(jsonReader.nextString());
+                    jsonReader.nextString();
                 }
                 if (name.equals("Warnings")){
                     readWarnings(jsonReader);
@@ -109,13 +109,13 @@ public class TimeUtility{
         Date finishTime = new Date();
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, minutes);
-        System.out.println("start time: " +  startTime);
+//        System.out.println("start time: " +  startTime);
         try {
             finishTime = format.parse(format.format(cal.getTime()));
         } catch (ParseException e){
             e.printStackTrace();
         }
-        System.out.println("finish time: " +  finishTime);
+//        System.out.println("finish time: " +  finishTime);
         return finishTime;
     }
     
@@ -124,23 +124,23 @@ public class TimeUtility{
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String name = jsonReader.nextName();
-            System.out.println(name);
+//            System.out.println(name);
             if (name.equals("CurrentTime")){
                 time = jsonReader.nextString();
-                System.out.println("real time: " + time);
+//                System.out.println("real time: " + time);
                 break;
             }
             
         }
         jsonReader.endObject();
-        System.out.println("about to return the time");
+//        System.out.println("about to return the time");
         return time;
     }
     
     public static void readWarnings(JsonReader rd) throws IOException{
         rd.beginArray();
         while (rd.hasNext()){
-            System.out.println(rd.nextString());
+            rd.nextString();
         }
         rd.endArray();
         
@@ -168,14 +168,14 @@ public class TimeUtility{
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("name = " + name);
+//                System.out.println("name = " + name);
                 if (name.equals("Result")) {
                     
                     minutes = readTravelTime(jsonReader, minutes);
-                    System.out.println("time: " + minutes);
+//                    System.out.println("time: " + minutes);
                 }
                 if (name.equals("Status")){
-                    System.out.println(jsonReader.nextString());
+                    jsonReader.nextString();
                 }
                 if (name.equals("Warnings")){
                     readWarnings(jsonReader);
@@ -194,14 +194,14 @@ public class TimeUtility{
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String name = jsonReader.nextName();
-            System.out.println(name);
+//            System.out.println(name);
             if (name.equals("TravelTime")){
                 minutes = jsonReader.nextInt();
-                System.out.println("travel time: " + minutes);
+//                System.out.println("travel time: " + minutes);
             }
         }
         jsonReader.endObject();
-        System.out.println("about to return the time");
+//        System.out.println("about to return the time");
         return minutes;
     }
 }

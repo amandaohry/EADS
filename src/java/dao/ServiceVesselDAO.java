@@ -25,7 +25,7 @@ import java.util.Map;
 public class ServiceVesselDAO {
     private ServiceVessel serviceVessel;
     private HashMap<String, ServiceVessel> serviceVesselMap = new HashMap<>();
-    public ArrayList<ServiceVessel> serviceVessels;
+    public ArrayList<ServiceVessel> serviceVessels = new ArrayList<ServiceVessel>();
     public int smallestCapacity = 825;
     
     //getServiceVesselDetail()
@@ -49,7 +49,7 @@ public class ServiceVesselDAO {
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("name = " + name);
+//                System.out.println("name = " + name);
                 if (name.equals("Result")) {
                     
                     serviceVesselMap = readServiceVesselDetail(jsonReader, serviceVesselMap);
@@ -73,7 +73,7 @@ public class ServiceVesselDAO {
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String mmsi = jsonReader.nextName();
-            System.out.println(mmsi);
+//            System.out.println(mmsi);
             jsonReader.beginObject();
             int capacity = 0;
             int flowRate = 0;
@@ -81,14 +81,14 @@ public class ServiceVesselDAO {
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("name: " + name);
+//                System.out.println("name: " + name);
                 if (name.equals("Capacity")){
                     capacity = jsonReader.nextInt();
-                    System.out.println("capacity: " + capacity);
+//                    System.out.println("capacity: " + capacity);
                 }
                 if (name.equals("FlowRate")){
                     flowRate = jsonReader.nextInt();
-                    System.out.println("flowRate: " + flowRate);
+//                    System.out.println("flowRate: " + flowRate);
                 }
                 
             }
@@ -116,7 +116,7 @@ public class ServiceVesselDAO {
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("name = " + name);
+//                System.out.println("name = " + name);
                 if (name.equals("Result")) {
                     
                     serviceVesselMap = readServiceVesselStatus(jsonReader, serviceVesselMap);
@@ -147,14 +147,14 @@ public class ServiceVesselDAO {
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("name: " + name);
+//                System.out.println("name: " + name);
                 if (name.equals("CurrentHold")){
                     currentHold = jsonReader.nextInt();
-                    System.out.println("currentHold: " + currentHold);
+//                    System.out.println("currentHold: " + currentHold);
                 }
                 if (name.equals("Status")){
                     status = jsonReader.nextString();
-                    System.out.println("status: " + status);
+//                    System.out.println("status: " + status);
                 }
                 
             }
@@ -185,7 +185,7 @@ public class ServiceVesselDAO {
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("name = " + name);
+//                System.out.println("name = " + name);
                 if (name.equals("Result")) {
                     
                     serviceVesselMap = readServiceVesselStatistics(jsonReader, serviceVesselMap);
@@ -220,14 +220,14 @@ public class ServiceVesselDAO {
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("name: " + name);
+//                System.out.println("name: " + name);
                 if (name.equals("Distance")){
                     distance = jsonReader.nextInt();
-                    System.out.println("distance: " + distance);
+//                    System.out.println("distance: " + distance);
                 }
                 if (name.equals("DriftCost")){
                     driftCost = jsonReader.nextInt();
-                    System.out.println("driftCost: " + driftCost);
+//                    System.out.println("driftCost: " + driftCost);
                 }
                 if (name.equals("DriftTime")){
                     driftTime = jsonReader.nextInt();
@@ -239,11 +239,11 @@ public class ServiceVesselDAO {
                 }
                 if (name.equals("GrossProfit")){
                     grossProfit = jsonReader.nextInt();
-                    System.out.println("grossProfit: " + grossProfit);
+//                    System.out.println("grossProfit: " + grossProfit);
                 }
                 if (name.equals("OperCost")){
                     operCost = (float) jsonReader.nextDouble();
-                    System.out.println("operCost: " + operCost);
+//                    System.out.println("operCost: " + operCost);
                 }
                 
                 
@@ -279,7 +279,7 @@ public class ServiceVesselDAO {
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("name = " + name);
+//                System.out.println("name = " + name);
                 if (name.equals("Result")) {
                     
                     serviceVessel = readServiceVesselDetailByMMSI(jsonReader, serviceVessel);
@@ -302,7 +302,7 @@ public class ServiceVesselDAO {
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String mmsi = jsonReader.nextName();
-            System.out.println(mmsi);
+//            System.out.println(mmsi);
             jsonReader.beginObject();
             int capacity = 0;
             int flowRate = 0;
@@ -310,14 +310,14 @@ public class ServiceVesselDAO {
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("name: " + name);
+//                System.out.println("name: " + name);
                 if (name.equals("Capacity")){
                     capacity = jsonReader.nextInt();
-                    System.out.println("capacity: " + capacity);
+//                    System.out.println("capacity: " + capacity);
                 }
                 if (name.equals("FlowRate")){
                     flowRate = jsonReader.nextInt();
-                    System.out.println("flowRate: " + flowRate);
+//                    System.out.println("flowRate: " + flowRate);
                 }
                 
             }
@@ -346,7 +346,7 @@ public class ServiceVesselDAO {
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("name = " + name);
+//                System.out.println("name = " + name);
                 if (name.equals("Result")) {
                     
                     serviceVessel = readServiceVesselStatusByMMSI(jsonReader, serviceVessel);
@@ -377,14 +377,14 @@ public class ServiceVesselDAO {
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("name: " + name);
+//                System.out.println("name: " + name);
                 if (name.equals("Capacity")){
                     capacity = jsonReader.nextInt();
-                    System.out.println("capacity: " + capacity);
+//                    System.out.println("capacity: " + capacity);
                 }
                 if (name.equals("FlowRate")){
                     flowRate = jsonReader.nextInt();
-                    System.out.println("flowRate: " + flowRate);
+//                    System.out.println("flowRate: " + flowRate);
                 }
                 
             }
@@ -413,7 +413,7 @@ public class ServiceVesselDAO {
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("name = " + name);
+//                System.out.println("name = " + name);
                 if (name.equals("Result")) {
                     
                     serviceVessel = readServiceVesselStatisticsByMMSI(jsonReader, serviceVessel);
@@ -444,14 +444,14 @@ public class ServiceVesselDAO {
             while (jsonReader.hasNext()) {
                 
                 String name = jsonReader.nextName();
-                System.out.println("name: " + name);
+//                System.out.println("name: " + name);
                 if (name.equals("Capacity")){
                     capacity = jsonReader.nextInt();
-                    System.out.println("capacity: " + capacity);
+//                    System.out.println("capacity: " + capacity);
                 }
                 if (name.equals("FlowRate")){
                     flowRate = jsonReader.nextInt();
-                    System.out.println("flowRate: " + flowRate);
+//                    System.out.println("flowRate: " + flowRate);
                 }
                 
             }

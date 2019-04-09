@@ -38,13 +38,13 @@ public class ServiceServlet extends HttpServlet {
         
         
         
-        HashMap<String,ArrayList<Service>> serviceMap = ServiceDAO.getServiceDetail(); //Calling getServiceDetail() function
-        
-        HashMap<String, ArrayList<Service>> serviceMap2 = ServiceDAO.getServiceStatus(); //Calling getServiceStatus() function
-
-        
-        request.setAttribute("serviceMap", serviceMap);
-        request.setAttribute("serviceMap2", serviceMap2);
+//        HashMap<String,ArrayList<Service>> serviceMap = ServiceDAO.getServiceDetail(); //Calling getServiceDetail() function
+//        
+//        HashMap<String, ArrayList<Service>> serviceMap2 = ServiceDAO.getServiceStatus(); //Calling getServiceStatus() function
+//
+//        
+//        request.setAttribute("serviceMap", serviceMap);
+//        request.setAttribute("serviceMap2", serviceMap2);
         
         
         request.getRequestDispatcher("/Service.jsp").forward(request, response);
