@@ -47,12 +47,22 @@ public class TimeUtility{
     }
     
     //get the current time in the simulation
-    public static Date getCurrentTime() throws FileNotFoundException, IOException, ParseException{
-        URL blackbox = new URL("http://127.0.0.1:8080/getCurrentTime");
-        URLConnection conn = blackbox.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        
-        String time = ""; //default time;
+    public static Date getCurrentTime(){
+        String time = null; //default time;
+        URL blackbox;
+        BufferedReader in = null;
+        Date dateTime = null;
+		try {
+			blackbox = new URL("http://127.0.0.1:8080/getCurrentTime");
+		
+	        URLConnection conn = blackbox.openConnection();
+	        in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	        
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
         try (JsonReader jsonReader = new JsonReader(in)) {
             jsonReader.beginObject();
             while (jsonReader.hasNext()) {
@@ -74,20 +84,25 @@ public class TimeUtility{
                 
             
             jsonReader.endObject();
-        }
-        Date dateTime = format.parse(time);
+        } catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			dateTime = format.parse(time);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
        return dateTime;
     }
     
     
     
     //get serviceTime
-    public static Date getServiceTime(ServiceVessel s, Date startTime, int fuelPumped){
-        int pumpRate = s.getPumpRate();
-        int timeTakenInMinutes = fuelPumped / pumpRate * 60;
-        Date finishTime = addMinutes(startTime, timeTakenInMinutes);
-        return finishTime;
-    }
+//    public static int getServiceTime(int pumpRate, int fuelPumped){
+//        int timeTakenInMinutes = fuelPumped / pumpRate * 60;
+//        Date finishTime = addMinutes(startTime, timeTakenInMinutes);
+//        return finishTime;
+//    }
     
     //add minutes to a date
     public static Date addMinutes(Date startTime, int minutes){
@@ -133,12 +148,21 @@ public class TimeUtility{
 //</editor-fold>
     
     //getTravelTime?src=<Source>&dst=<Destination>&vsl=<MMSI>
-    public static int getTravelTime(String source, String destination, String mmsi) throws MalformedURLException, IOException{
-        URL blackbox = new URL("http://127.0.0.1:8080/getTravelTime?src=" + source + "&dst=" + destination + "&vsl=" + mmsi);
-        URLConnection conn = blackbox.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        
+    public static int getTravelTime(String source, String destination, String mmsi){
+        URL blackbox;
         int minutes = 0;
+        BufferedReader in = null;
+		try {
+			blackbox = new URL("http://127.0.0.1:8080/getTravelTime?src=" + source + "&dst=" + destination + "&vsl=" + mmsi);
+		
+	        URLConnection conn = blackbox.openConnection();
+	        in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	        
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
         try (JsonReader jsonReader = new JsonReader(in)) {
             jsonReader.beginObject();
             while (jsonReader.hasNext()) {
@@ -160,7 +184,9 @@ public class TimeUtility{
                 
             
             jsonReader.endObject();
-        }
+        } catch (IOException e) {
+			e.printStackTrace();
+		}
         return minutes;
     }
     

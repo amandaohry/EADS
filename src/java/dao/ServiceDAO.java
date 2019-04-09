@@ -7,10 +7,15 @@ package dao;
 
 import com.google.gson.JsonArray;
 import entity.Service;
+import entity.ServiceVessel;
+
 import java.io.*;
 import java.util.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
 import java.net.MalformedURLException;
@@ -21,14 +26,25 @@ import utility.TimeUtility;
  * @author aquil
  */
 public class ServiceDAO {
-    private static HashMap<String, ArrayList<Service>> serviceMap = new HashMap<String, ArrayList<Service>>();
-    final private static int SMALLEST_CAPACITY = 825;
-    private static ArrayList<Service> serviceList;
-
+	public static SimpleDateFormat format = new SimpleDateFormat("YYYY-mm-dd HH:MM:SS");  
+    private HashMap<String, ArrayList<Service>> serviceMap = new HashMap<String, ArrayList<Service>>();
+    final private  int SMALLEST_CAPACITY = 825;
+    private ArrayList<Service> services;
+    private ArrayList<Service> serviceList;//sub list (for internal usage)
     //getServiceDetail()
     //<editor-fold defaultstate="collapsed" desc="getServiceDetail()">
+    public void mapToList(){
+		services.add(new Service("0", "0", "2020-01-01 00:00:00", null, null, 0));//add depot service
+    	for (Map.Entry<String, ArrayList<Service>> entry : serviceMap.entrySet()) {
+    	    String key = entry.getKey();
+    	    ArrayList<Service> value = entry.getValue();
+    	    for (Service s: value) {
+    	    	services.add(s);
+    	    }
+    	}
+    }
     
-    public static HashMap<String, ArrayList<Service>> getServiceDetail() throws MalformedURLException, IOException{
+    public  ArrayList<Service> getServiceDetail() throws MalformedURLException, IOException{
         //Gson gson = new GsonBuilder().setPrettyPrinting().create();
         JsonObject jsonOutput = new JsonObject();
         URL blackbox = new URL("http://127.0.0.1:8080/getServiceDetail");
@@ -43,6 +59,7 @@ public class ServiceDAO {
                 System.out.println("line 38: name = " + name);
                 if (name.equals("Result")) {
                     serviceMap = readServiceDetail(jsonReader, serviceMap);
+                    mapToList();
                 }
                 if (name.equals("Status")){
                     String status = jsonReader.nextString();
@@ -55,10 +72,10 @@ public class ServiceDAO {
             
             jsonReader.endObject();
         }
-        return serviceMap;
+        return services;
     }
     
-    public static HashMap<String, ArrayList<Service>> readServiceDetail(JsonReader jsonReader, HashMap<String, ArrayList<Service>> serviceMap) throws IOException{
+    public  HashMap<String, ArrayList<Service>> readServiceDetail(JsonReader jsonReader, HashMap<String, ArrayList<Service>> serviceMap) throws IOException{
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String requestID = jsonReader.nextName();
@@ -119,7 +136,7 @@ public class ServiceDAO {
     
     //helper methods
     //<editor-fold defaultstate="collapsed" desc="unfold to see readWarnings and readLocation methods">
-    public static void readWarnings(JsonReader rd) throws IOException{
+    public  void readWarnings(JsonReader rd) throws IOException{
         ArrayList<String> warnings = new ArrayList<>();
         rd.beginArray();
         while (rd.hasNext()){
@@ -130,7 +147,7 @@ public class ServiceDAO {
         
     }
     
-    public static float[] readLocation(JsonReader rd) throws IOException{
+    public  float[] readLocation(JsonReader rd) throws IOException{
         float[] location = new float[2];
         rd.beginArray();
         int counter = 0;
@@ -146,7 +163,7 @@ public class ServiceDAO {
     //getServiceStatus()
     //<editor-fold defaultstate="collapsed" desc="getServiceStatus()">
     
-    public static HashMap<String, ArrayList<Service>> getServiceStatus() throws MalformedURLException, IOException{
+    public  HashMap<String, ArrayList<Service>> getServiceStatus() throws MalformedURLException, IOException{
         System.out.println("getServiceStatus is called");
         URL blackbox = new URL("http://127.0.0.1:8080/getServiceStatus");
         URLConnection conn = blackbox.openConnection();
@@ -176,7 +193,7 @@ public class ServiceDAO {
         return serviceMap;
     }
     
-    public static HashMap<String, ArrayList<Service>> readServiceStatus(JsonReader jsonReader) throws IOException{
+    public  HashMap<String, ArrayList<Service>> readServiceStatus(JsonReader jsonReader) throws IOException{
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String requestID = jsonReader.nextName();
@@ -234,7 +251,7 @@ public class ServiceDAO {
     
     //getServiceDetailByRequestID(String requestID)
     //<editor-fold defaultstate="collapsed" desc="getServiceDetailByRequestID(String requestID)">
-    public static ArrayList<Service> getServiceDetailByRequestID(String requestID) throws IOException{
+    public  ArrayList<Service> getServiceDetailByRequestID(String requestID) throws IOException{
         System.out.println("getServiceDetailByRequestID(String requestID) is called");
         URL blackbox = new URL("http://localhost:8080/getServiceDetail?id=" + requestID);
         URLConnection conn = blackbox.openConnection();
@@ -262,7 +279,7 @@ public class ServiceDAO {
         }
         return serviceList;
     }
-    public static ArrayList<Service> readServiceDetailByRequestID(JsonReader jsonReader, ArrayList<Service> service) throws IOException{
+    public  ArrayList<Service> readServiceDetailByRequestID(JsonReader jsonReader, ArrayList<Service> service) throws IOException{
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String requestID = jsonReader.nextName();
@@ -313,7 +330,7 @@ public class ServiceDAO {
     //getServiceStatusByRequestID(String requestID)
     //<editor-fold defaultstate="collapsed" desc="getServiceStatusByRequestID(String requestID)">
     
-    public static ArrayList<Service> getServiceStatusByRequestID(String requestID) throws IOException{
+    public  ArrayList<Service> getServiceStatusByRequestID(String requestID) throws IOException{
         System.out.println("getServiceStatusByRequestID(String requestID) is called");
         URL blackbox = new URL("http://localhost:8080/getServiceStatus?id=" + requestID);
         URLConnection conn = blackbox.openConnection();
@@ -341,7 +358,7 @@ public class ServiceDAO {
         }
         return serviceList;
     }
-    public static ArrayList<Service> readServiceStatusByRequestID(JsonReader jsonReader, ArrayList<Service> service) throws IOException{
+    public  ArrayList<Service> readServiceStatusByRequestID(JsonReader jsonReader, ArrayList<Service> service) throws IOException{
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String requestID = jsonReader.nextName();

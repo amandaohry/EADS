@@ -5,15 +5,20 @@
  */
 package entity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  *
  * @author aquil
  */
 public class Service {
     //static variables
+	public static SimpleDateFormat format = new SimpleDateFormat("YYYY-mm-dd HH:MM:SS");  
     public String mmsi;
     public String requestID;
-    public String requestTime; //time of request
+    public Date requestTime; //time of request
     public float[] location; //service location in longitude, latitude
     public String time; //requested service time: Ei
     public int requestedFuel; //bunker fuel requested in tons
@@ -27,7 +32,11 @@ public class Service {
     public Service(String mmsi, String requestID, String requestTime, float[] location, String time, int requestedFuel){
         this.mmsi = mmsi;
         this.requestID = requestID;
-        this.requestTime = requestTime;
+        try {
+			this.requestTime = format.parse(requestTime);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
         this.location = location;
         this.time = time;
         this.requestedFuel = requestedFuel;
@@ -36,7 +45,11 @@ public class Service {
     public Service(String mmsi, String requestID, String requestTime, float[] location, String time, int requestedFuel, float timeDelay, float fuelReceived, String status){
         this.mmsi = mmsi;
         this.requestID = requestID;
-        this.requestTime = requestTime;
+        try {
+			this.requestTime = format.parse(requestTime);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
         this.location = location;
         this.time = time;
         this.requestedFuel = requestedFuel;
@@ -52,7 +65,7 @@ public class Service {
     public String getRequestID(){
         return this.requestID;
     }
-    public String getRequestTime(){
+    public Date getRequestTime(){
         return this.requestTime;
     }
     public float[] getLocation(){
