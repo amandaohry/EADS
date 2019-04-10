@@ -35,41 +35,47 @@ public class ServiceVesselDAO {
     }
     //getServiceVesselDetail()
     //<editor-fold defaultstate="collapsed" desc="getServiceVesselDetail()">
-    public void mapToList(){
+    public ArrayList<ServiceVessel> mapToList(HashMap<String, ServiceVessel> serviceVesselMap){
     	for (Map.Entry<String, ServiceVessel> entry : serviceVesselMap.entrySet()) {
     	    String key = entry.getKey();
     	    ServiceVessel value = entry.getValue();
     	    serviceVessels.add(value);
     	}
+        return serviceVessels;
     }
     
-    public ArrayList<ServiceVessel> getServiceVesselDetail() throws MalformedURLException, IOException{
+    public ArrayList<ServiceVessel> getServiceVesselDetail() {
+        try{
+            URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselDetail");
+            URLConnection conn = blackbox.openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
-        URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselDetail");
-        URLConnection conn = blackbox.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        
-        try (JsonReader jsonReader = new JsonReader(in)) {
-            jsonReader.beginObject();
-            while (jsonReader.hasNext()) {
-                
-                String name = jsonReader.nextName();
-//                System.out.println("name = " + name);
-                if (name.equals("Result")) {
-                    
-                    serviceVesselMap = readServiceVesselDetail(jsonReader, serviceVesselMap);
-                    mapToList();
+            try (JsonReader jsonReader = new JsonReader(in)) {
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+
+                    String name = jsonReader.nextName();
+    //                System.out.println("name = " + name);
+                    if (name.equals("Result")) {
+
+                        serviceVesselMap = readServiceVesselDetail(jsonReader, serviceVesselMap);
+                        serviceVessels = mapToList(serviceVesselMap);
+                    }
+                    if (name.equals("Status")){
+                        String status = jsonReader.nextString();
+                    }
+                    if (name.equals("Warnings")){
+                        readWarnings(jsonReader);
+                    }
                 }
-                if (name.equals("Status")){
-                    String status = jsonReader.nextString();
-                }
-                if (name.equals("Warnings")){
-                    readWarnings(jsonReader);
-                }
+
+
+                jsonReader.endObject();
             }
-            
-            
-            jsonReader.endObject();
+        } catch (MalformedURLException e){
+            e.printStackTrace();
+        } catch (IOException e){
+            e.printStackTrace();
         }
         return serviceVessels;
     }
@@ -111,31 +117,37 @@ public class ServiceVesselDAO {
     //getServiceVesselStatus()
     //<editor-fold defaultstate="collapsed" desc="getServiceVesselStatus()">
     
-    public HashMap<String, ServiceVessel> getServiceVesselStatus() throws MalformedURLException, IOException{
-        URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselStatus");
-        URLConnection conn = blackbox.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        
-        try (JsonReader jsonReader = new JsonReader(in)) {
-            jsonReader.beginObject();
-            while (jsonReader.hasNext()) {
-                
-                String name = jsonReader.nextName();
-//                System.out.println("name = " + name);
-                if (name.equals("Result")) {
-                    
-                    serviceVesselMap = readServiceVesselStatus(jsonReader, serviceVesselMap);
+    public HashMap<String, ServiceVessel> getServiceVesselStatus() {
+        try{
+            URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselStatus");
+            URLConnection conn = blackbox.openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+            try (JsonReader jsonReader = new JsonReader(in)) {
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+
+                    String name = jsonReader.nextName();
+    //                System.out.println("name = " + name);
+                    if (name.equals("Result")) {
+
+                        serviceVesselMap = readServiceVesselStatus(jsonReader, serviceVesselMap);
+                    }
+                    if (name.equals("Status")){
+                        String status = jsonReader.nextString();
+                    }
+                    if (name.equals("Warnings")){
+                        readWarnings(jsonReader);
+                    }
                 }
-                if (name.equals("Status")){
-                    String status = jsonReader.nextString();
-                }
-                if (name.equals("Warnings")){
-                    readWarnings(jsonReader);
-                }
+
+
+                jsonReader.endObject();
             }
-            
-            
-            jsonReader.endObject();
+        } catch (MalformedURLException e){
+            e.printStackTrace();
+        } catch (IOException e){
+            e.printStackTrace();
         }
         return serviceVesselMap;
     }
@@ -180,32 +192,37 @@ public class ServiceVesselDAO {
     //getServiceVesselStatistics()
     //<editor-fold defaultstate="collapsed" desc="getServiceVesselStatistics()">
     
-    public HashMap<String, ServiceVessel> getServiceVesselStatistics() throws MalformedURLException, IOException{
+    public HashMap<String, ServiceVessel> getServiceVesselStatistics(){
+        try {
+            URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselStatistics");
+            URLConnection conn = blackbox.openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
-        URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselStatistics");
-        URLConnection conn = blackbox.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        
-        try (JsonReader jsonReader = new JsonReader(in)) {
-            jsonReader.beginObject();
-            while (jsonReader.hasNext()) {
-                
-                String name = jsonReader.nextName();
-//                System.out.println("name = " + name);
-                if (name.equals("Result")) {
-                    
-                    serviceVesselMap = readServiceVesselStatistics(jsonReader, serviceVesselMap);
+            try (JsonReader jsonReader = new JsonReader(in)) {
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+
+                    String name = jsonReader.nextName();
+    //                System.out.println("name = " + name);
+                    if (name.equals("Result")) {
+
+                        serviceVesselMap = readServiceVesselStatistics(jsonReader, serviceVesselMap);
+                    }
+                    if (name.equals("Status")){
+                        String status = jsonReader.nextString();
+                    }
+                    if (name.equals("Warnings")){
+                        readWarnings(jsonReader);
+                    }
                 }
-                if (name.equals("Status")){
-                    String status = jsonReader.nextString();
-                }
-                if (name.equals("Warnings")){
-                    readWarnings(jsonReader);
-                }
+
+
+                jsonReader.endObject();
             }
-            
-            
-            jsonReader.endObject();
+        } catch (MalformedURLException e){
+            e.printStackTrace();
+        } catch (IOException e){
+            e.printStackTrace();
         }
         return serviceVesselMap;
     }
