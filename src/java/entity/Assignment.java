@@ -22,8 +22,7 @@ public class Assignment {
     public ArrayList<String> notices;
     
     //constructors
-    public Assignment(String assignmentID, String action, String departTime, String destination, String mmsi){
-        this.assignmentID = assignmentID;
+    public Assignment(String action, String departTime, String destination, String mmsi){
         this.action = action;
         this.departTime = departTime;
         this.destination = destination;
@@ -49,22 +48,22 @@ public class Assignment {
         return this.fuel;
     }
     //setters
-//    public void setAssignmentID(String assignmentID){
-//        this.assignmentID=assignmentID;
-//    }
-//    public void setAction(String action){
-//        this.action=action;
-//    }
-//    public void setDepartTime(String departTime){
-//        this.departTime=departTime;
-//    }
-//    public void setDestination(String destination){
-//        this.destination=destination;
-//    }
-//    public void setMMSI(String mmsi){
-//        this.mmsi=mmsi;
-//    }
-//    public void setFuel(int fuel){
-//        this.fuel=fuel;
-//    }
+    public void setAssignmentID(String assignmentID){
+        this.assignmentID=assignmentID;
+    }
+    public void setAction(String action){
+        this.action=action;
+    }
+    public void setDepartTime(String departTime){
+        this.departTime=departTime;
+    }
+    public void setDestination(String destination){
+        this.destination=destination;
+    }
+    public void setMMSI(String mmsi){
+        this.mmsi=mmsi;
+    }
+    public void setFuel(int fuel){
+        this.fuel=fuel;
+    }
 }

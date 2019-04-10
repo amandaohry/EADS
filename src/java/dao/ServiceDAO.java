@@ -37,7 +37,7 @@ public class ServiceDAO {
     }
     //getServiceDetail()
     //<editor-fold defaultstate="collapsed" desc="getServiceDetail()">
-    public void mapToList(){
+    public ArrayList<Service> mapToList(HashMap<String, ArrayList<Service>> serviceMap){
 	services.add(new Service("0", "0", "2020-01-01 00:00:00", null, null, 0));//add depot service
     	for (Map.Entry<String, ArrayList<Service>> entry : serviceMap.entrySet()) {
     	    String key = entry.getKey();
@@ -47,35 +47,41 @@ public class ServiceDAO {
     	    }
             
     	}
+        return services;
     }
     
-    public  ArrayList<Service> getServiceDetail() throws MalformedURLException, IOException{
-        
-        URL blackbox = new URL("http://127.0.0.1:8080/getServiceDetail");
-        URLConnection conn = blackbox.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        
-        try (JsonReader jsonReader = new JsonReader(in)) {
-            jsonReader.beginObject();
-            while (jsonReader.hasNext()) {
-                
-                String name = jsonReader.nextName();
-//                System.out.println("line 38: name = " + name);
-                if (name.equals("Result")) {
-                    serviceMap = readServiceDetail(jsonReader);
-                    
-                    mapToList();
+    public  ArrayList<Service> getServiceDetail(){
+        try{
+            URL blackbox = new URL("http://127.0.0.1:8080/getServiceDetail");
+            URLConnection conn = blackbox.openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+            try (JsonReader jsonReader = new JsonReader(in)) {
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+
+                    String name = jsonReader.nextName();
+    //                System.out.println("line 38: name = " + name);
+                    if (name.equals("Result")) {
+                        serviceMap = readServiceDetail(jsonReader);
+
+                        services = mapToList(serviceMap);
+                    }
+                    if (name.equals("Status")){
+                        String status = jsonReader.nextString();
+                    }
+                    if (name.equals("Warnings")){
+                        readWarnings(jsonReader);
+                    }
                 }
-                if (name.equals("Status")){
-                    String status = jsonReader.nextString();
-                }
-                if (name.equals("Warnings")){
-                    readWarnings(jsonReader);
-                }
+
+
+                jsonReader.endObject();
             }
-            
-            
-            jsonReader.endObject();
+        } catch (MalformedURLException e){
+            e.printStackTrace();
+        } catch (IOException e){
+            e.printStackTrace();
         }
         System.out.println("is services null? " + (services == null));
         return services;
@@ -170,32 +176,38 @@ public class ServiceDAO {
     //getServiceStatus()
     //<editor-fold defaultstate="collapsed" desc="getServiceStatus()">
     
-    public HashMap<String, ArrayList<Service>> getServiceStatus() throws MalformedURLException, IOException{
+    public HashMap<String, ArrayList<Service>> getServiceStatus(){
         System.out.println("getServiceStatus is called");
-        URL blackbox = new URL("http://127.0.0.1:8080/getServiceStatus");
-        URLConnection conn = blackbox.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        
-        try (JsonReader jsonReader = new JsonReader(in)) {
-            jsonReader.beginObject();
-            while (jsonReader.hasNext()) {
-                
-                String name = jsonReader.nextName();
-                System.out.println("name = " + name);
-                if (name.equals("Result")) {
-                    
-                    serviceMap = readServiceStatus(jsonReader);
+        try{
+            URL blackbox = new URL("http://127.0.0.1:8080/getServiceStatus");
+            URLConnection conn = blackbox.openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+            try (JsonReader jsonReader = new JsonReader(in)) {
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+
+                    String name = jsonReader.nextName();
+                    System.out.println("name = " + name);
+                    if (name.equals("Result")) {
+
+                        serviceMap = readServiceStatus(jsonReader);
+                    }
+                    if (name.equals("Status")){
+                        String status = jsonReader.nextString();
+                    }
+                    if (name.equals("Warnings")){
+                        readWarnings(jsonReader);
+                    }
                 }
-                if (name.equals("Status")){
-                    String status = jsonReader.nextString();
-                }
-                if (name.equals("Warnings")){
-                    readWarnings(jsonReader);
-                }
+
+
+                jsonReader.endObject();
             }
-            
-            
-            jsonReader.endObject();
+        }  catch (MalformedURLException e){
+            e.printStackTrace();
+        } catch (IOException e){
+            e.printStackTrace();
         }
         return serviceMap;
     }
@@ -258,6 +270,7 @@ public class ServiceDAO {
             
         }
         jsonReader.endObject();
+    
         return serviceMap;
     }
     
@@ -265,31 +278,37 @@ public class ServiceDAO {
     
     //getServiceDetailByRequestID(String requestID)
     //<editor-fold defaultstate="collapsed" desc="getServiceDetailByRequestID(String requestID)">
-    public  ArrayList<Service> getServiceDetailByRequestID(String requestID) throws IOException{
-//        System.out.println("getServiceDetailByRequestID(String requestID) is called");
-        URL blackbox = new URL("http://localhost:8080/getServiceDetail?id=" + requestID);
-        URLConnection conn = blackbox.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        
-        try (JsonReader jsonReader = new JsonReader(in)) {
-            jsonReader.beginObject();
-            while (jsonReader.hasNext()) {
-                
-                String name = jsonReader.nextName();
-//                System.out.println("name = " + name);
-                if (name.equals("Result")) {
-                    serviceList = readServiceDetailByRequestID(jsonReader, serviceList);
+    public  ArrayList<Service> getServiceDetailByRequestID(String requestID) {
+        try{
+    //        System.out.println("getServiceDetailByRequestID(String requestID) is called");
+            URL blackbox = new URL("http://localhost:8080/getServiceDetail?id=" + requestID);
+            URLConnection conn = blackbox.openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+            try (JsonReader jsonReader = new JsonReader(in)) {
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+
+                    String name = jsonReader.nextName();
+    //                System.out.println("name = " + name);
+                    if (name.equals("Result")) {
+                        serviceList = readServiceDetailByRequestID(jsonReader, serviceList);
+                    }
+                    if (name.equals("Status")){
+                        String status = jsonReader.nextString();
+                    }
+                    if (name.equals("Warnings")){
+                        readWarnings(jsonReader);
+                    }
                 }
-                if (name.equals("Status")){
-                    String status = jsonReader.nextString();
-                }
-                if (name.equals("Warnings")){
-                    readWarnings(jsonReader);
-                }
+
+
+                jsonReader.endObject();
             }
-            
-            
-            jsonReader.endObject();
+        } catch (MalformedURLException e){
+            e.printStackTrace();
+        } catch (IOException e){
+            e.printStackTrace();
         }
         return serviceList;
     }
