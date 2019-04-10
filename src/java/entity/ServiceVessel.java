@@ -12,7 +12,7 @@ package entity;
 public class ServiceVessel extends Vessel  {
     //static information
     public String mmsi;
-    public int capacity;
+    public int capacity; 
     public int pumpRate;
     public int refuelRate;
     
@@ -31,6 +31,7 @@ public class ServiceVessel extends Vessel  {
     
     //constructors 
     public ServiceVessel(String mmsi, int capacity, int pumpRate){
+        super(mmsi, capacity, pumpRate);
         this.mmsi = mmsi;
         this.capacity = capacity;
         this.pumpRate = pumpRate;
