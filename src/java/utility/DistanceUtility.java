@@ -14,25 +14,19 @@ import entity.ServiceVessel;
  */
 public class DistanceUtility {
     //getdistanceBetweenTwoServices
-    public static float getDistanceBetweenTwoServices(ServiceVessel sv, Service s1, Service s2){
-        float[] locationOfS1 = s1.getLocation();
-        float lat1 = locationOfS1[0];
-        float lon1 = locationOfS1[1];
-        float[] locationOfS2 = s2.getLocation();
-        float lat2 = locationOfS2[0];
-        float lon2 = locationOfS2[1];
+    public static double getDistanceBetweenTwoLocations(float[] location1, float[] location2){
+        float lat1 = location1[0];
+        float lon1 = location1[1];
+        float lat2 = location2[0];
+        float lon2 = location2[1];
         
         System.out.println(distance(32.9697, -96.80322, 29.46786, -98.53506, 'M') + " Miles\n");
         System.out.println(distance(32.9697, -96.80322, 29.46786, -98.53506, 'K') + " Kilometers\n");
         System.out.println(distance(32.9697, -96.80322, 29.46786, -98.53506, 'N') + " Nautical Miles\n");
         
-        double distanceInMiles = distance(lat1, lon1, lat2, lon2, 'M');
-        System.out.println(distanceInMiles + " Miles\n");
         double distanceInKilometers = distance(lat1, lon1, lat2, lon2, 'K');
         System.out.println(distanceInKilometers + " Kilometers\n");
-        double distanceInNauticalMiles = distance(lat1, lon1, lat2, lon2, 'N') ;
-        System.out.println(distanceInNauticalMiles+ " Nautical Miles\n");
-        return (float) distanceInKilometers;
+        return distanceInKilometers;
     }
     
     //<editor-fold defaultstate="collapsed" desc="distance methods">

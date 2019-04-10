@@ -16,6 +16,7 @@ import entity.Service;
 import entity.ServiceVessel;
 import java.net.MalformedURLException;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -117,6 +118,12 @@ public class TimeUtility{
         }
 //        System.out.println("finish time: " +  finishTime);
         return finishTime;
+    }
+    
+    //getDateDiff(date1,date2,TimeUnit.MINUTES);
+    public static long getDateDiff(Date date1, Date date2, TimeUnit timeUnit) {
+        long diffInMillies = date2.getTime() - date1.getTime();
+        return timeUnit.convert(diffInMillies,TimeUnit.MILLISECONDS);
     }
     
     //<editor-fold defaultstate="collapsed" desc="getCurrentTime helper methods">

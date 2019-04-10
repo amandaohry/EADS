@@ -4,6 +4,8 @@
     Author     : aquil
 --%>
 
+<%@page import="entity.Vessel"%>
+<%@page import="utility.AssignmentUtility"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="entity.Service"%>
 <%@page import="entity.ServiceVessel"%>
@@ -15,7 +17,11 @@
   <body>
         
     <h1>SCO-BlackBox</h1>
-    <h2>Data Retrieval Actions</h2>
+    <h2>Data Retrieval Actions</h2
+    <form action='AssignmentServlet' method='get' name ="AssignmentServlet">
+        <button type="submit" class="btn btn-amber">assign</button>
+    </form>
+    
         <%
             String time = "";
             if (request.getAttribute("time") != null) {

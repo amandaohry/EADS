@@ -53,7 +53,7 @@ public class ServiceVessel extends Vessel  {
     public int getRefuelRate(){
         return this.refuelRate;
     }
-    public float getCurrentCapacity(){
+    public int getCurrentCapacity(){
         return this.currentCapacity;
     }
     public String getStatus(){
