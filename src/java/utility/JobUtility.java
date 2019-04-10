@@ -5,13 +5,17 @@
  */
 package utility;
 
+import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import entity.Service;
 import entity.Assignment;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,43 +32,60 @@ public class JobUtility {
     public static HashMap<String, Assignment> map = new HashMap<>();
     
     //getTravelTime?src=<Source>&dst=<Destination>&vsl=<MMSI>
-    public static void sendJobs(String mmsi, String action, String destination, String departTime, int fuel) throws MalformedURLException, IOException{
+    public static ArrayList<Assignment> sendJobs(ArrayList<Assignment> assignmentList, ArrayList<String> assignmentIDList) throws MalformedURLException, IOException{
+        ArrayList<Assignment> assignments = new ArrayList<>();
         URL blackbox = new URL("http://127.0.0.1:8080/sendJobs");
         HttpURLConnection conn = (HttpURLConnection) blackbox.openConnection();
         conn.setRequestMethod("POST");
-        
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-        ArrayList<ArrayList<Assignment>> jobList = new ArrayList<>();
-        try (JsonReader jsonReader = new JsonReader(in)) {
-            jsonReader.beginObject();
-            while (jsonReader.hasNext()) {
-                
-                String name = jsonReader.nextName();
-                System.out.println("name = " + name);
-                if (name.equals("Result")) {
-                    
-                    jobList = readJobs(jsonReader, jobList);
-                }
-                if (name.equals("Status")){
-                    System.out.println(jsonReader.nextString());
-                }
-                if (name.equals("Warnings")){
-                    readWarnings(jsonReader);
-                }
-            }
-                
-            
-            jsonReader.endObject();
+        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
+        JsonObject json = new JsonObject();
+        try (JsonWriter writer = new JsonWriter(out)) {
+                writer.setIndent("    ");
+                writer.beginObject();
+                writer.name("Cancel");
+                writeCancelList(writer, assignmentIDList);
+                writer.name("Assign");
+                writeAssignList(writer, assignmentList);
+                writer.endObject();
+                writer.close();
+                System.out.println(writer.isHtmlSafe());
         }
+        
+        return assignments;
     }
-    public static void sendAssignList(JsonWriter jw){
-        String action = "";
-        String departTime = "";
-        String destination = "";
-        String mmsi = "";
-        int fuel = 0;
-    }
+    
+    public static void writeCancelList(JsonWriter writer, ArrayList<String> assignmentIDList) throws IOException {
+        writer.beginArray();
+        for (String assignmentID: assignmentIDList){
+            writer.beginObject();
+            writer.name("AssignmentID");
+            writer.value(assignmentID);
+            writer.endObject();
+            writer.endObject();
+        }
+        writer.endArray();
+   }
+    public static void writeAssignList(JsonWriter writer, ArrayList<Assignment> assignmentList) throws IOException {
+        
+        writer.beginArray();
+        for (Assignment asst: assignmentList){
+            writer.beginObject();
+            writer.name("MMSI");
+            writer.value(asst.getMMSI());
+            writer.name("Action");
+            writer.value(asst.getAction());
+            writer.name("Destination");
+            writer.value(asst.getDestination());
+            writer.name("DepartTime");
+            writer.value(asst.getDepartTime());
+            if (asst.getFuel()!=0){
+                writer.name("fuel");
+                writer.value(asst.getFuel());
+            }
+            writer.endObject();
+        }
+        writer.endArray();
+   }
     
 
     public static ArrayList<ArrayList<Assignment>> readJobs(JsonReader jsonReader, ArrayList<ArrayList<Assignment>> jobList) throws IOException{
@@ -85,7 +106,6 @@ public class JobUtility {
             
         }
         jsonReader.endObject();
-        System.out.println("about to return the time");
         return jobList;
     }
     public static ArrayList<Assignment> readCancelList(JsonReader jsonReader, ArrayList<Assignment> cancelList) throws IOException{
