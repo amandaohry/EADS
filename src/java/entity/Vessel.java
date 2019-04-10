@@ -25,6 +25,9 @@ public class Vessel {
     public float ETA;
     public String destination;
     public String status;
+    public int capacity;
+    public int pumpRate;
+    public int refuelRate;
     
     //constructors
     public Vessel(String mmsi, String vesselName){
@@ -54,6 +57,12 @@ public class Vessel {
         this.status = status;
     }
     
+    public Vessel(String mmsi, int capacity, int pumpRate){
+        this.mmsi = mmsi;
+        this.capacity = capacity;
+        this.pumpRate = pumpRate;
+        this.refuelRate = pumpRate*2;
+    }
     
     //getters for vessel status
     public float[] getLocation(){

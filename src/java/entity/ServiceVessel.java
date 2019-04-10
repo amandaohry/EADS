@@ -9,7 +9,7 @@ package entity;
  *
  * @author aquil
  */
-public class ServiceVessel {
+public class ServiceVessel extends Vessel  {
     //static information
     public String mmsi;
     public int capacity;
@@ -29,7 +29,7 @@ public class ServiceVessel {
     public int grossProfit;
     public float operCost;
     
-    //constructors
+    //constructors 
     public ServiceVessel(String mmsi, int capacity, int pumpRate){
         this.mmsi = mmsi;
         this.capacity = capacity;
