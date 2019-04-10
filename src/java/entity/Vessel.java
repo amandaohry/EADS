@@ -9,7 +9,7 @@ package entity;
  *
  * @author aquil
  */
-public class OceangoingVessel {
+public class Vessel {
     //static information
     public String mmsi;
     public float Beam;
@@ -27,12 +27,12 @@ public class OceangoingVessel {
     public String status;
     
     //constructors
-    public OceangoingVessel(String mmsi, String vesselName){
+    public Vessel(String mmsi, String vesselName){
         this.mmsi = mmsi;
         this.vesselName = vesselName;
     }
     
-    public OceangoingVessel(String mmsi, String vesselName, float Beam,  float CruiseSpd, float Draft, float LengthOfVessel, int Weight){
+    public Vessel(String mmsi, String vesselName, float Beam,  float CruiseSpd, float Draft, float LengthOfVessel, int Weight){
         this.mmsi = mmsi;
         this.vesselName = vesselName;
         this.Beam = Beam;
@@ -43,7 +43,7 @@ public class OceangoingVessel {
         
     }
     
-    public OceangoingVessel(String mmsi, float[] location, String locName, float speed, float direction, float ETA, String destination, String status){
+    public Vessel(String mmsi, float[] location, String locName, float speed, float direction, float ETA, String destination, String status){
         this.mmsi = mmsi;
         this.location = location;
         this.locName = locName;

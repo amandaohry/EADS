@@ -5,7 +5,7 @@
  */
 package dao;
 
-import entity.OceangoingVessel;
+import entity.Vessel;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
@@ -20,17 +20,17 @@ import java.util.*;
  *
  * @author aquil
  */
-public class OceangoingVesselDAO {
+public class VesselDAO {
     //public ArrayList<OceangoingVessel> ogvList;
     //public static ArrayList<OceangoingVessel> oceanGoingVessel;
     
-    public ArrayList<OceangoingVessel> getVesselDetail() throws MalformedURLException, IOException{
-        ArrayList<OceangoingVessel> ogv = new ArrayList<>();
+    public ArrayList<Vessel> getVesselDetail() throws MalformedURLException, IOException{
+        ArrayList<Vessel> ogv = new ArrayList<>();
         
         URL blackbox = new URL("http://127.0.0.1:8080/getVesselDetail");
         URLConnection conn = blackbox.openConnection();
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream())); 
-        ArrayList<OceangoingVessel> oceangoingVessel = new ArrayList<>();
+        ArrayList<Vessel> oceangoingVessel = new ArrayList<>();
         
         try(JsonReader jsonReader = new JsonReader(in)){
             jsonReader.beginObject();
@@ -69,13 +69,13 @@ public class OceangoingVesselDAO {
         
     }
     
-   public ArrayList<OceangoingVessel> getVesselStatus() throws MalformedURLException, IOException{
-        ArrayList<OceangoingVessel> ogv = new ArrayList<>();
+   public ArrayList<Vessel> getVesselStatus() throws MalformedURLException, IOException{
+        ArrayList<Vessel> ogv = new ArrayList<>();
         
         URL blackbox = new URL("http://127.0.0.1:8080/getVesselStatus");
         URLConnection conn = blackbox.openConnection();
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream())); 
-        ArrayList<OceangoingVessel> oceangoingVessel = new ArrayList<>();
+        ArrayList<Vessel> oceangoingVessel = new ArrayList<>();
         
         try(JsonReader jsonReader = new JsonReader(in)){
             jsonReader.beginObject();
@@ -105,7 +105,7 @@ public class OceangoingVesselDAO {
     
    
    
-    public ArrayList<OceangoingVessel> readOceanGoingVesselDetail(JsonReader jsonReader, ArrayList<OceangoingVessel> oceanGoingVessel) throws  IOException{
+    public ArrayList<Vessel> readOceanGoingVesselDetail(JsonReader jsonReader, ArrayList<Vessel> oceanGoingVessel) throws  IOException{
         jsonReader.beginObject();
         while(jsonReader.hasNext()){
             String mmsi = jsonReader.nextName();
@@ -140,7 +140,7 @@ public class OceangoingVesselDAO {
                     weight = jsonReader.nextInt();
                 }
             }
-            OceangoingVessel oceangoingVessel  = new OceangoingVessel(mmsi, vesselName, beam, cruiseSpd, draft, lengthOfVessel, weight );
+            Vessel oceangoingVessel  = new Vessel(mmsi, vesselName, beam, cruiseSpd, draft, lengthOfVessel, weight );
             oceanGoingVessel.add(oceangoingVessel);
             jsonReader.endObject();
         }
@@ -148,8 +148,8 @@ public class OceangoingVesselDAO {
         return oceanGoingVessel;
     }
     
-    public OceangoingVessel readOceanGoingVesselStatus(JsonReader jsonReader, OceangoingVessel vessel) throws  IOException{
-        OceangoingVessel oceangoingVessel = null;
+    public Vessel readOceanGoingVesselStatus(JsonReader jsonReader, Vessel vessel) throws  IOException{
+        Vessel oceangoingVessel = null;
         jsonReader.beginObject();
         while(jsonReader.hasNext()){
             String mmsi = jsonReader.nextName();
@@ -188,7 +188,7 @@ public class OceangoingVesselDAO {
                     status = jsonReader.nextString();
                 }
             }
-            oceangoingVessel  = new OceangoingVessel(mmsi, location, locName, speed, direction, eta, destination, status );
+            oceangoingVessel  = new Vessel(mmsi, location, locName, speed, direction, eta, destination, status );
             
             jsonReader.endObject();
         }
