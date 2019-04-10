@@ -34,22 +34,17 @@ public class ServiceVesselServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        ServiceVesselDAO serviceVesselDAO = new ServiceVesselDAO();
+        ArrayList<ServiceVessel> serviceVesselList = serviceVesselDAO.getServiceVesselDetail(); //Calling getServiceDetail() function
 
-//        HashMap<String, ServiceVessel> serviceVesselMap = ServiceVesselDAO.getServiceVesselDetail(); //Calling getServiceDetail() function
-//
-//        
-//        HashMap<String, ServiceVessel> serviceVesselMap2 = ServiceVesselDAO.getServiceVesselStatus(); //Calling getServiceStatus() function
-//
-//        HashMap<String, ServiceVessel> serviceVesselMap3 = ServiceVesselDAO.getServiceVesselStatistics(); //Calling getServiceStatus() function
-//        if (serviceVesselMap3 !=null){
-//            System.out.println("serviceVesselMap3: " + serviceVesselMap3.keySet());
-//        } else {
-//            System.out.println("serviceVesselMap3 is empty" );
-//        }
-//
-//        request.setAttribute("serviceVesselMap", serviceVesselMap);
-//        request.setAttribute("serviceVesselMap2", serviceVesselMap2);
-//        request.setAttribute("serviceVesselMap3", serviceVesselMap3);
+        
+        HashMap<String, ServiceVessel> serviceVesselMap2 = serviceVesselDAO.getServiceVesselStatus(); //Calling getServiceStatus() function
+
+        HashMap<String, ServiceVessel> serviceVesselMap3 = serviceVesselDAO.getServiceVesselStatistics(); //Calling getServiceStatus() function
+
+        request.setAttribute("serviceVesselList", serviceVesselList);
+        request.setAttribute("serviceVesselMap2", serviceVesselMap2);
+        request.setAttribute("serviceVesselMap3", serviceVesselMap3);
         
         
         request.getRequestDispatcher("/ServiceVessel.jsp").forward(request, response);

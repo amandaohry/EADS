@@ -5,7 +5,6 @@
  */
 package dao;
 
-import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
 import entity.ServiceVessel;
 import java.io.BufferedReader;
@@ -24,10 +23,16 @@ import java.util.Map;
  */
 public class ServiceVesselDAO {
     private ServiceVessel serviceVessel;
-    private HashMap<String, ServiceVessel> serviceVesselMap = new HashMap<>();
-    public ArrayList<ServiceVessel> serviceVessels = new ArrayList<ServiceVessel>();
+    private HashMap<String, ServiceVessel> serviceVesselMap;
+    public ArrayList<ServiceVessel> serviceVessels;
     public int smallestCapacity = 825;
     
+    public ServiceVesselDAO(){
+        this.serviceVessel=null;
+        this.serviceVesselMap = new HashMap<>();
+        this.serviceVessels = new ArrayList<ServiceVessel>();
+        //this.smallestCapacity = findSmallestCapacity();
+    }
     //getServiceVesselDetail()
     //<editor-fold defaultstate="collapsed" desc="getServiceVesselDetail()">
     public void mapToList(){
@@ -158,6 +163,7 @@ public class ServiceVesselDAO {
                 }
                 
             }
+            ArrayList<ServiceVessel> mapValues = new ArrayList<>(serviceVesselMap.values());
             serviceVessel = serviceVesselMap.get(mmsi);
             serviceVessel.setCurrentCapacity(currentHold);
             serviceVessel.setStatus(status);

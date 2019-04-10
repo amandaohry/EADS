@@ -26,27 +26,31 @@ import utility.TimeUtility;
  * @author aquil
  */
 public class ServiceDAO {
-	public static SimpleDateFormat format = new SimpleDateFormat("YYYY-mm-dd HH:MM:SS");  
-    private HashMap<String, ArrayList<Service>> serviceMap = new HashMap<String, ArrayList<Service>>();
-    final private  int SMALLEST_CAPACITY = 825;
+    public static SimpleDateFormat format = new SimpleDateFormat("YYYY-mm-dd HH:MM:SS");  
+    private HashMap<String, ArrayList<Service>> serviceMap;
+    private  int SMALLEST_CAPACITY = 825;
     private ArrayList<Service> services = new ArrayList<Service>();
     private ArrayList<Service> serviceList;//sub list (for internal usage)
+    
+    public ServiceDAO(){
+        this.serviceMap = new HashMap<String, ArrayList<Service>>();
+    }
     //getServiceDetail()
     //<editor-fold defaultstate="collapsed" desc="getServiceDetail()">
     public void mapToList(){
-		services.add(new Service("0", "0", "2020-01-01 00:00:00", null, null, 0));//add depot service
+	services.add(new Service("0", "0", "2020-01-01 00:00:00", null, null, 0));//add depot service
     	for (Map.Entry<String, ArrayList<Service>> entry : serviceMap.entrySet()) {
     	    String key = entry.getKey();
     	    ArrayList<Service> value = entry.getValue();
     	    for (Service s: value) {
     	    	services.add(s);
     	    }
+            
     	}
     }
     
     public  ArrayList<Service> getServiceDetail() throws MalformedURLException, IOException{
-        //Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        JsonObject jsonOutput = new JsonObject();
+        
         URL blackbox = new URL("http://127.0.0.1:8080/getServiceDetail");
         URLConnection conn = blackbox.openConnection();
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -58,7 +62,8 @@ public class ServiceDAO {
                 String name = jsonReader.nextName();
 //                System.out.println("line 38: name = " + name);
                 if (name.equals("Result")) {
-                    serviceMap = readServiceDetail(jsonReader, serviceMap);
+                    serviceMap = readServiceDetail(jsonReader);
+                    
                     mapToList();
                 }
                 if (name.equals("Status")){
@@ -72,10 +77,11 @@ public class ServiceDAO {
             
             jsonReader.endObject();
         }
+        System.out.println("is services null? " + (services == null));
         return services;
     }
     
-    public  HashMap<String, ArrayList<Service>> readServiceDetail(JsonReader jsonReader, HashMap<String, ArrayList<Service>> serviceMap) throws IOException{
+    public  HashMap<String, ArrayList<Service>> readServiceDetail(JsonReader jsonReader) throws IOException{
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String requestID = jsonReader.nextName();
@@ -118,14 +124,15 @@ public class ServiceDAO {
             int fuelRequiredOfLastService = fuelRequired % SMALLEST_CAPACITY;
             System.out.println("fuelRequiredOfLastService: " + fuelRequiredOfLastService);
             
-            ArrayList<Service> serviceList = new ArrayList<>();
+            ArrayList<Service> services = new ArrayList<>();
             for (int i = 0; i < numServices; i++){
                 Service service = new Service(mmsi, requestID, timeRequested, location, timePosted, SMALLEST_CAPACITY);
-                serviceList.add(service);
+                services.add(service);
             }
+            
             Service lastService = new Service(mmsi, requestID, timeRequested, location, timePosted, fuelRequiredOfLastService);
-            serviceList.add(lastService);
-            serviceMap.put(requestID, serviceList);
+            services.add(lastService);
+            serviceMap.put(requestID, services);
             jsonReader.endObject();
         }
         jsonReader.endObject();
@@ -163,7 +170,7 @@ public class ServiceDAO {
     //getServiceStatus()
     //<editor-fold defaultstate="collapsed" desc="getServiceStatus()">
     
-    public  HashMap<String, ArrayList<Service>> getServiceStatus() throws MalformedURLException, IOException{
+    public HashMap<String, ArrayList<Service>> getServiceStatus() throws MalformedURLException, IOException{
         System.out.println("getServiceStatus is called");
         URL blackbox = new URL("http://127.0.0.1:8080/getServiceStatus");
         URLConnection conn = blackbox.openConnection();
@@ -193,7 +200,7 @@ public class ServiceDAO {
         return serviceMap;
     }
     
-    public  HashMap<String, ArrayList<Service>> readServiceStatus(JsonReader jsonReader) throws IOException{
+    public HashMap<String, ArrayList<Service>> readServiceStatus(JsonReader jsonReader) throws IOException{
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String requestID = jsonReader.nextName();
@@ -224,6 +231,13 @@ public class ServiceDAO {
                 }
             }
             jsonReader.endObject();
+            ArrayList<ArrayList<Service>> mapValues = new ArrayList<>(serviceMap.values());
+            for (ArrayList<Service> sList: mapValues){
+                for (Service s: sList){
+                    System.out.println(s.requestID);
+                }
+            }
+            
             ArrayList<Service> serviceList = serviceMap.get(requestID);
             int numServicesWithFuelReceived = Math.floorDiv(fuelReceived, SMALLEST_CAPACITY);
             for (Service service: serviceList){

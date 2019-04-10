@@ -16,11 +16,10 @@
     <body>
         <h3 class="text-center red-text"><%="Service Vessel List 1 (getServiceVesselDetail)"%></h3>
         <%
-            HashMap<String, ServiceVessel> serviceVesselMap = new HashMap<>();
-            if (request.getAttribute("serviceVesselMap") != null) {
-                serviceVesselMap = (HashMap<String, ServiceVessel>) request.getAttribute("serviceVesselMap");
+            ArrayList<ServiceVessel> serviceVesselList = null;
+            if (request.getAttribute("serviceVesselList") != null) {
+                serviceVesselList = (ArrayList<ServiceVessel>) request.getAttribute("serviceVesselList");
             }
-            ArrayList<ServiceVessel> serviceVesselList = new ArrayList<>(serviceVesselMap.values());
             
             HashMap<String, ServiceVessel> serviceVesselMap2 = new HashMap<>();
             if (request.getAttribute("serviceVesselMap2") != null) {

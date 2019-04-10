@@ -14,6 +14,7 @@ public class ServiceVessel {
     public String mmsi;
     public int capacity;
     public int pumpRate;
+    public int refuelRate;
     
     //dynamic information
     
@@ -33,6 +34,7 @@ public class ServiceVessel {
         this.mmsi = mmsi;
         this.capacity = capacity;
         this.pumpRate = pumpRate;
+        this.refuelRate = pumpRate*2;
     }
     
     
@@ -46,6 +48,9 @@ public class ServiceVessel {
     }
     public int getPumpRate(){
         return this.pumpRate;
+    }
+    public int getRefuelRate(){
+        return this.refuelRate;
     }
     public float getCurrentCapacity(){
         return this.currentCapacity;
