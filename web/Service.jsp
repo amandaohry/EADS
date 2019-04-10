@@ -16,17 +16,18 @@
     <body>
         
         <%
-            HashMap<String, ArrayList<Service>> serviceMap = new HashMap<>();
-            if (request.getAttribute("serviceMap") != null) {
-                serviceMap = (HashMap<String, ArrayList<Service>>) request.getAttribute("serviceMap");
+            ArrayList<Service> serviceList = null;
+            if (request.getAttribute("serviceList") != null) {
+                serviceList = (ArrayList<Service>) request.getAttribute("serviceList");
             }
-            ArrayList<ArrayList<Service>> listOfServiceList = new ArrayList<>(serviceMap.values());
             
+            ArrayList<ArrayList<Service>> listOfServiceList2 = null;
             HashMap<String, ArrayList<Service>> serviceMap2 = new HashMap<>();
             if (request.getAttribute("serviceMap2") != null) {
                 serviceMap2 = (HashMap<String, ArrayList<Service>>) request.getAttribute("serviceMap2");
+                listOfServiceList2 = new ArrayList<>(serviceMap2.values());
             }
-            ArrayList<ArrayList<Service>> listOfServiceList2 = new ArrayList<>(serviceMap.values());
+            
             
         %> 
         <h3 class="text-center red-text"><%="Service List 1 (getServiceDetail) "%></h3>
@@ -43,8 +44,6 @@
             <th>status</th>
         <%                            
             int counter = 0;
-            if (!listOfServiceList.isEmpty()) {
-                for(ArrayList<Service> serviceList: listOfServiceList){
                     for(Service s: serviceList){
                         counter++;
         %>
@@ -62,8 +61,7 @@
             </tr>
         <%
                     }
-                }
-            }
+                
         %>
         </table>
         <h3 class="text-center red-text"><%="Service List 2 (getServiceStatus)"%></h3>
@@ -80,7 +78,7 @@
             <th>status</th>
         <%                          
             int counter2 = 0;
-            if (!listOfServiceList2.isEmpty()) {
+            if (listOfServiceList2!=null) {
                 for(ArrayList<Service> serviceList2: listOfServiceList2){
                     for(Service s: serviceList2){
                         counter2++;

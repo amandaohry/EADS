@@ -36,15 +36,15 @@ public class ServiceServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         
+        ServiceDAO serviceDAO = new ServiceDAO();
         
+        ArrayList<Service> serviceList = serviceDAO.getServiceDetail(); //Calling getServiceDetail() function
         
-//        HashMap<String,ArrayList<Service>> serviceMap = ServiceDAO.getServiceDetail(); //Calling getServiceDetail() function
-//        
-//        HashMap<String, ArrayList<Service>> serviceMap2 = ServiceDAO.getServiceStatus(); //Calling getServiceStatus() function
-//
-//        
-//        request.setAttribute("serviceMap", serviceMap);
-//        request.setAttribute("serviceMap2", serviceMap2);
+        HashMap<String, ArrayList<Service>> serviceMap2 = serviceDAO.getServiceStatus(); //Calling getServiceStatus() function
+
+        
+        request.setAttribute("serviceList", serviceList);
+        request.setAttribute("serviceMap2", serviceMap2);
         
         
         request.getRequestDispatcher("/Service.jsp").forward(request, response);
