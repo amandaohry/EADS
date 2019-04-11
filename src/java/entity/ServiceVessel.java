@@ -29,6 +29,10 @@ public class ServiceVessel extends Vessel  {
     public int grossProfit;
     public float operCost;
     
+    //vessel status
+    public String locName;
+    public float speed;
+    
     //constructors 
     public ServiceVessel(String mmsi, int capacity, int pumpRate){
         super(mmsi, capacity, pumpRate);
@@ -53,7 +57,7 @@ public class ServiceVessel extends Vessel  {
     public int getRefuelRate(){
         return this.refuelRate;
     }
-    public float getCurrentCapacity(){
+    public int getCurrentCapacity(){
         return this.currentCapacity;
     }
     public String getStatus(){
@@ -76,6 +80,12 @@ public class ServiceVessel extends Vessel  {
     }
     public float getOperCost(){
         return this.operCost;
+    }
+    public String getLocName(){
+        return locName;
+    }
+    public float getSpeed(){
+        return speed;
     }
     //</editor-fold>
     
@@ -105,6 +115,13 @@ public class ServiceVessel extends Vessel  {
     public void setOperCost(float operCost){
         this.operCost = operCost;
     }
+    public void setLocName(String locName){
+        this.locName=locName;
+    }
+    public void setSpeed(float speed){
+        this.speed=speed;
+    }
+    
 //</editor-fold>
     
     

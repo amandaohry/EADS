@@ -1,9 +1,11 @@
-<%-- 
+<%--
     Document   : index
     Created on : Apr 3, 2019, 7:07:14 PM
     Author     : aquil
 --%>
 
+<%@page import="entity.Vessel"%>
+<%@page import="utility.AssignmentUtility"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="entity.Service"%>
 <%@page import="entity.ServiceVessel"%>
@@ -12,6 +14,7 @@
 <% String time = "00:00:00"; %>
 <!DOCTYPE html>
 <html>
+
     <head><title>SCO-BlackBox</title></head>
     <body>
         <h1>SCO-BlackBox</h1>
@@ -21,13 +24,17 @@
             }
         </style>
     </head>
+    
+    <form action='AssignmentServlet' method='get' name ="AssignmentServlet">
+        <button type="submit" class="btn btn-amber">assign</button>
+    </form>
 
     <h2>Start Running Model</h2>
     <p>Time Interval: 1 min</p>
 
     <p>Show Current Time</p>
     <button id="ctbotton" onclick="setInterval(getCurrentTime, 60000);">Generate Current Time</button>
-    
+
     <p>Show Travel Time Time</p>
     <button id = "ttbutton" onclick="setInterval(getTravelTime, 60000;)">Generate Travel Time</button>
 
@@ -36,7 +43,7 @@
         if (request.getAttribute("time") != null) {
             time = (String) request.getAttribute("time");
         }
-    %> 
+    %>
     <p>Simulation Start time: <%= TimeUtility.getSimpleDateFormat().format(TimeUtility.getSimulationStartTime())%></p>
     <form action='CurrentTimeServlet' method='get' name ="CurrentTimeServlet">
         <h3>Get Current Time</h3>
@@ -56,7 +63,7 @@
         if (request.getAttribute("travelTime") != null) {
             travelTime = (int) request.getAttribute("travelTime");
         }
-    %> 
+    %>
     <form action='TravelTimeServlet' method='get' name ="TravelTimeServlet">
         <h3>Get Travel Time</h3>
         <p>provides predicted vessel travel time from source, destination and vessel information. Source and destination may be provided as <Longitude>,<Latitude> or <Location Name> or <Service Request ID>. Vessel information is used for routing, taking into account vessel properties when calculating travel time.</p>
@@ -113,16 +120,16 @@
 
                                 var y = document.createElement("TR");
                                 document.getElementById("currentTable").appendChild(y);
-                                
+
                                 var t = document.createTextNode("<%=time%>");
                                 y.appendChild(t);
                                 document.getElementById("currentTable").appendChild(y);
-                                
+
                                 var table = document.getElementById("currentTable");
                                 var header = table.createTHead();
                                 var row = header.insertRow(0);
                                 row.innerHTML = "<b>Current Time Output</b>";
-                                
+
                                 //setInterval(function () {document.getElementById("ctbutton").click();}, 10000); //update output, time interval
                             }
                             function getTravelTime() {
@@ -138,7 +145,7 @@
                                 var c = document.createTextNode("<%=travelTime%>");
                                 b.appendChild(c);
                                 document.getElementById("travelTable").appendChild(b);
-                                
+
                                 var table = document.getElementById("travelTable");
                                 var header = table.createTHead();
                                 var row = header.insertRow(0);

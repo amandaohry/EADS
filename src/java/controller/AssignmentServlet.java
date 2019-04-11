@@ -3,62 +3,78 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package utility;
+package controller;
 
-import dao.*;
+import dao.ServiceDAO;
+import dao.ServiceVesselDAO;
 import entity.*;
 import java.util.*;
-import entity.Service;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.concurrent.TimeUnit;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import utility.AssignmentUtility;
+import static utility.AssignmentUtility.nextServiceBatch;
+import static utility.AssignmentUtility.result;
+import utility.DistanceUtility;
+import utility.TimeUtility;
 
 /**
  *
  * @author aquil
  */
-public class AssignmentUtility {
-
-    /*
-		pseudocode
-		1. sort the service by requestedFuel
-		2. sort the SV by currentHold
-		3. 
-		
-		
-		constraints
-		1. maximum 2 SV assigned to 1 service
-		
-		variables
-		1. waiting time = max(service time1 + travel time1, service time2 + travel time2) - (expected start time of service)
-		2. travel time = travel time 1 + travel time 2
-		3. service time = fuelReceived * pumpRate
-		
-		
-     */
-    public static ArrayList<Service> nextServiceBatch;
+@WebServlet(name = "AssignmentServlet", urlPatterns = {"/AssignmentServlet"})
+public class AssignmentServlet extends HttpServlet {
     public static String[] result;
-    
-    public static HashMap<Service, ArrayList<Vessel>> assign() {
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+//        HashMap<Service, ArrayList<Vessel>> serviceAndVesselMap = AssignmentUtility.assign();
+//        request.setAttribute("serviceAndVesselMap", serviceAndVesselMap); //with setAttribute() you can define a "key" and value pair so that you can get it in future using getAttribute("key")
+//        
+//        request.getRequestDispatcher("/assignment.jsp").forward(request, response);//RequestDispatcher is used to send the control to the invoked page.
+        
+        
+
         ServiceDAO serviceDAO = new ServiceDAO();
         ServiceVesselDAO serviceVesselDAO = new ServiceVesselDAO();
-
+        
+        
                 
         ArrayList<Service> serviceList = serviceDAO.getServiceDetail();
         serviceList = serviceDAO.getServiceStatus();
-                
-        for(Service s: nextServiceBatch){
-            serviceList.add(s);
+        
+        
+        if (nextServiceBatch !=null){
+            for(Service s: nextServiceBatch){
+                serviceList.add(s);
+            }
         }
         
         ArrayList<ServiceVessel> serviceVesselList = serviceVesselDAO.getServiceVesselDetail();
         serviceVesselList = serviceVesselDAO.getServiceVesselStatus();
         serviceVesselList = serviceVesselDAO.getServiceVesselStatistics();
+        HashMap<String, Vessel> map = serviceVesselDAO.getVesselDetail();
+        map = serviceVesselDAO.getVesselStatus();
 
         Collections.sort(serviceList, new ServiceComparator());
         Collections.sort(serviceVesselList, new ServiceVesselComparator());
 
 
-        HashMap<Service, ArrayList<Vessel>> serviceAndVesselMap = new HashMap<>();
+        HashMap<Service, ArrayList<ServiceVessel>> serviceAndVesselMap = new HashMap<>();
         nextServiceBatch = new ArrayList<>();
         //index of service vessels in the arraylist
         int count = 0;
@@ -70,7 +86,7 @@ public class AssignmentUtility {
             int currentSum = 0;
             
             //initialise the arraylist of vessels assigned to this service request
-            ArrayList<Vessel> vesselListForOneService = new ArrayList<>();
+            ArrayList<ServiceVessel> vesselListForOneService = new ArrayList<>();
             
             //for each unassigned service vessel
             for (int j = count; j < serviceVesselList.size(); j++) {
@@ -119,12 +135,15 @@ public class AssignmentUtility {
         Date currentTime = TimeUtility.getCurrentTime();
 
         for (Service service : serviceAndVesselMap.keySet()) {
-            float[] sLocation = service.getLocation();
-            ArrayList<Vessel> vList = serviceAndVesselMap.get(service);
+            String sRequestID = service.getRequestID();
+            ArrayList<ServiceVessel> vList = serviceAndVesselMap.get(service);
             for (int i = 0; i < vList.size(); i++) {
-                Vessel v = vList.get(i);
-                float[] vLocation = v.getLocation();
-                double distance = DistanceUtility.getDistanceBetweenTwoLocations(sLocation, vLocation);
+                ServiceVessel v = vList.get(i);
+                String vLocation = v.getLocName();
+                //float[] vLocation = v.getLocation();
+                String mmsi = v.getMMSI();
+                double distance = TimeUtility.getTravelTime(sRequestID, vLocation, mmsi);
+                //double distance = DistanceUtility.getDistanceBetweenTwoLocations(sLocation, vLocation);
                 totalTravelTime = totalTravelTime + distance / (v.getSpeed() / 60);
             }
         }
@@ -141,13 +160,14 @@ public class AssignmentUtility {
                 e.printStackTrace();
             }
                 
-            float[] sLocation = service.getLocation();
-            ArrayList<Vessel> vList = serviceAndVesselMap.get(service);
+            String sRequestID = service.getRequestID();
+            ArrayList<ServiceVessel> vList = serviceAndVesselMap.get(service);
             //if only one vessel is servicing this request
             if (vList.size() == 1) {
-                Vessel v = vList.get(0);
-                float[] vLocation = v.getLocation();
-                int distance = (int) Math.round(DistanceUtility.getDistanceBetweenTwoLocations(sLocation, vLocation));
+                ServiceVessel v = vList.get(0);
+                String vLocation = v.getLocName();
+                String mmsi = v.getMMSI();
+                int distance = (int) Math.round(TimeUtility.getTravelTime(sRequestID, vLocation, mmsi));
                 int travelTime = Math.round(distance / (v.getSpeed() / 60));
 
                 //get arrival time of service vessel (Bj)
@@ -168,19 +188,19 @@ public class AssignmentUtility {
 
             }
             if (vList.size() == 2) {
-                Vessel v1 = vList.get(0);
-                Vessel v2 = vList.get(1);
-                ServiceVessel sv1 = (ServiceVessel) v1;
-                ServiceVessel sv2 = (ServiceVessel) v2;
+                ServiceVessel sv1 = vList.get(0);
+                ServiceVessel sv2 = vList.get(1);
                 
-                float[] v1Location = v1.getLocation();
-                float[] v2Location = v2.getLocation();
+                String v1Location = sv1.getLocName();
+                String mmsi1 = sv1.getMMSI();
+                String v2Location = sv2.getLocName();
+                String mmsi2 = sv2.getMMSI();
+                
+                int distance1 = (int) Math.round(TimeUtility.getTravelTime(sRequestID, v1Location, mmsi1));
+                int distance2 = (int) Math.round(TimeUtility.getTravelTime(sRequestID, v2Location, mmsi2));
 
-                int distance1 = (int) Math.round(DistanceUtility.getDistanceBetweenTwoLocations(sLocation, v1Location));
-                int distance2 = (int) Math.round(DistanceUtility.getDistanceBetweenTwoLocations(sLocation, v2Location));
-
-                int travelTime1 = Math.round(distance1 / (v1.getSpeed() / 60));
-                int travelTime2 = Math.round(distance2 / (v2.getSpeed() / 60));
+                int travelTime1 = Math.round(distance1 / (sv1.getSpeed() / 60));
+                int travelTime2 = Math.round(distance2 / (sv2.getSpeed() / 60));
 
                 Date arrivalTime1 = TimeUtility.addMinutes(currentTime, travelTime1);
                 Date arrivalTime2 = TimeUtility.addMinutes(currentTime, travelTime2);
@@ -208,13 +228,53 @@ public class AssignmentUtility {
 
             }
         }
+        result = new String[2];
         result[0] = "The total travel time is " + totalTravelTime;
         result[1] = "The total waiting time is " + totalWaitingTime;
-        return serviceAndVesselMap;
+        request.setAttribute("serviceAndVesselMap", serviceAndVesselMap);
+        request.getRequestDispatcher("/assignment.jsp").forward(request, response);//RequestDispatcher is used to send the control to the invoked page.
     }
 
-}
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
 
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}
 class ServiceComparator implements Comparator<Service> {
 
     public int compare(Service s1, Service s2) {

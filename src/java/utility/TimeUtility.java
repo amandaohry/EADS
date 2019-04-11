@@ -16,6 +16,7 @@ import entity.Service;
 import entity.ServiceVessel;
 import java.net.MalformedURLException;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -119,6 +120,12 @@ public class TimeUtility{
         return finishTime;
     }
     
+    //getDateDiff(date1,date2,TimeUnit.MINUTES);
+    public static long getDateDiff(Date date1, Date date2, TimeUnit timeUnit) {
+        long diffInMillies = date2.getTime() - date1.getTime();
+        return timeUnit.convert(diffInMillies,TimeUnit.MILLISECONDS);
+    }
+    
     //<editor-fold defaultstate="collapsed" desc="getCurrentTime helper methods">
     public static String read(JsonReader jsonReader, String time) throws IOException{
         jsonReader.beginObject();
@@ -198,10 +205,55 @@ public class TimeUtility{
             if (name.equals("TravelTime")){
                 minutes = jsonReader.nextInt();
 //                System.out.println("travel time: " + minutes);
+            } else {
+                jsonReader.nextString();
             }
         }
         jsonReader.endObject();
 //        System.out.println("about to return the time");
+        return minutes;
+    }
+    
+    public static int getTravelTimeBySpeed(float[] source, String destination, double speed){
+        URL blackbox;
+        int minutes = 0;
+        String sourceToString = source[0] + "," + source[1];
+        BufferedReader in = null;
+		try {
+			blackbox = new URL("http://127.0.0.1:8080/getTravelTime?src=" + sourceToString + "&dst=" + destination + "&spd=" + speed);
+		
+	        URLConnection conn = blackbox.openConnection();
+	        in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	        
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        try (JsonReader jsonReader = new JsonReader(in)) {
+            jsonReader.beginObject();
+            while (jsonReader.hasNext()) {
+                
+                String name = jsonReader.nextName();
+//                System.out.println("name = " + name);
+                if (name.equals("Result")) {
+                    
+                    minutes = readTravelTime(jsonReader, minutes);
+//                    System.out.println("time: " + minutes);
+                }
+                if (name.equals("Status")){
+                    jsonReader.nextString();
+                }
+                if (name.equals("Warnings")){
+                    readWarnings(jsonReader);
+                }
+            }
+                
+            
+            jsonReader.endObject();
+        } catch (IOException e) {
+			e.printStackTrace();
+		}
         return minutes;
     }
 }

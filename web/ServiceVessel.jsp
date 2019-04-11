@@ -20,18 +20,15 @@
             if (request.getAttribute("serviceVesselList") != null) {
                 serviceVesselList = (ArrayList<ServiceVessel>) request.getAttribute("serviceVesselList");
             }
-            
-            HashMap<String, ServiceVessel> serviceVesselMap2 = new HashMap<>();
-            if (request.getAttribute("serviceVesselMap2") != null) {
-                serviceVesselMap2 = (HashMap<String, ServiceVessel>) request.getAttribute("serviceVesselMap2");
+            ArrayList<ServiceVessel> serviceVesselList2 = null;
+            if (request.getAttribute("serviceVesselList2") != null) {
+                serviceVesselList2 = (ArrayList<ServiceVessel>) request.getAttribute("serviceVesselList2");
             }
-            ArrayList<ServiceVessel> serviceVesselList2 = new ArrayList<>(serviceVesselMap2.values());
-            
-            HashMap<String, ServiceVessel> serviceVesselMap3 = new HashMap<>();
-            if (request.getAttribute("serviceVesselMap3") != null) {
-                serviceVesselMap3 = (HashMap<String, ServiceVessel>) request.getAttribute("serviceVesselMap3");
+            ArrayList<ServiceVessel> serviceVesselList3 = null;
+            if (request.getAttribute("serviceVesselList3") != null) {
+                serviceVesselList3 = (ArrayList<ServiceVessel>) request.getAttribute("serviceVesselList3");
             }
-            ArrayList<ServiceVessel> serviceVesselList3 = new ArrayList<>(serviceVesselMap3.values());
+     
             
         %> 
         <table border=1>
