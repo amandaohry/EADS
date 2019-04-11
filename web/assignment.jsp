@@ -4,9 +4,12 @@
     Author     : aquil
 --%>
 
+<%@page import="controller.AssignmentServlet"%>
 <%@page import="entity.*"%>
 <%@page import="java.util.*"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<p><%=AssignmentServlet.result[0]%></p>
+<p><%=AssignmentServlet.result[1]%></p>
 <table border=1>
             <th>index</th>
             <th>MMSI</th>
@@ -18,6 +21,8 @@
             <th>time delay</th>
             <th>fuel received</th>
             <th>status</th>
+            <th>vessel 1</th>
+            <th>vessel 2</th>
         <%
             //assignment
             int counter = 0;
@@ -39,6 +44,18 @@
                 <td><%=s.getTimeDelay()%></td>
                 <td><%=s.getFuelReceived()%></td>
                 <td><%=s.getStatus()%></td>
+                <td><%out.println(serviceAndVesselMap.get(s).get(0).mmsi);%></td>
+        <%
+            if (serviceAndVesselMap.get(s).size()==2){
+        %>
+                <td><%out.println(serviceAndVesselMap.get(s).get(1).mmsi);%></td>
+        <%
+            } else {
+        %>
+        <td></td>
+        <%
+            }
+        %>
             </tr>
         <%
             }

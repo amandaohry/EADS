@@ -44,15 +44,15 @@ public class AssignmentUtility {
 
                 
         ArrayList<Service> serviceList = serviceDAO.getServiceDetail();
-        serviceList = serviceDAO.mapToList(serviceDAO.getServiceStatus());
+        serviceList = serviceDAO.getServiceStatus();
                 
         for(Service s: nextServiceBatch){
             serviceList.add(s);
         }
         
         ArrayList<ServiceVessel> serviceVesselList = serviceVesselDAO.getServiceVesselDetail();
-        serviceVesselList = serviceVesselDAO.mapToList(serviceVesselDAO.getServiceVesselStatus());
-        serviceVesselList = serviceVesselDAO.mapToList(serviceVesselDAO.getServiceVesselStatistics());
+        serviceVesselList = serviceVesselDAO.getServiceVesselStatus();
+        serviceVesselList = serviceVesselDAO.getServiceVesselStatistics();
 
         Collections.sort(serviceList, new ServiceComparator());
         Collections.sort(serviceVesselList, new ServiceVesselComparator());

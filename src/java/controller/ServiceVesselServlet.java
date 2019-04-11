@@ -38,13 +38,13 @@ public class ServiceVesselServlet extends HttpServlet {
         ArrayList<ServiceVessel> serviceVesselList = serviceVesselDAO.getServiceVesselDetail(); //Calling getServiceDetail() function
 
         
-        HashMap<String, ServiceVessel> serviceVesselMap2 = serviceVesselDAO.getServiceVesselStatus(); //Calling getServiceStatus() function
+        ArrayList<ServiceVessel> serviceVesselList2 = serviceVesselDAO.getServiceVesselStatus(); //Calling getServiceStatus() function
 
-        HashMap<String, ServiceVessel> serviceVesselMap3 = serviceVesselDAO.getServiceVesselStatistics(); //Calling getServiceStatus() function
+        ArrayList<ServiceVessel> serviceVesselList3 = serviceVesselDAO.getServiceVesselStatistics(); //Calling getServiceStatus() function
 
         request.setAttribute("serviceVesselList", serviceVesselList);
-        request.setAttribute("serviceVesselMap2", serviceVesselMap2);
-        request.setAttribute("serviceVesselMap3", serviceVesselMap3);
+        request.setAttribute("serviceVesselList2", serviceVesselList2);
+        request.setAttribute("serviceVesselList3", serviceVesselList3);
         
         
         request.getRequestDispatcher("/ServiceVessel.jsp").forward(request, response);

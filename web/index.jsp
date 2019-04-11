@@ -14,39 +14,7 @@
 <% String time = "00:00:00"; %>
 <!DOCTYPE html>
 <html>
-  <head><title>SCO-BlackBox</title></head>
-  <body>
 
-    <h1>SCO-BlackBox</h1>
-    <h2>Data Retrieval Actions</h2
-    <form action='AssignmentServlet' method='get' name ="AssignmentServlet">
-        <button type="submit" class="btn btn-amber">assign</button>
-    </form>
-
-        <%
-            String time = "";
-            if (request.getAttribute("time") != null) {
-                time = (String) request.getAttribute("time");
-            }
-        %>
-        <p>Simulation Start time: <%= TimeUtility.getSimpleDateFormat().format(TimeUtility.getSimulationStartTime())%></p>
-        <form action='CurrentTimeServlet' method='get' name ="CurrentTimeServlet">
-            <h3>Get Current Time</h3>
-            <p>provides the current simulation time at the time of inquiry.</p>
-            <button type="submit" class="btn btn-amber">Get Current Time</button>
-        </form>
-        <%
-            if (!time.equals("")) {
-        %>
-        <h4 class="text-center red-text"><%=time%></h4>
-        <%
-            }
-        %>
-
-        <%
-            int travelTime = 0;
-            if (request.getAttribute("travelTime") != null) {
-                travelTime = (int) request.getAttribute("travelTime");
     <head><title>SCO-BlackBox</title></head>
     <body>
         <h1>SCO-BlackBox</h1>
@@ -56,6 +24,10 @@
             }
         </style>
     </head>
+    
+    <form action='AssignmentServlet' method='get' name ="AssignmentServlet">
+        <button type="submit" class="btn btn-amber">assign</button>
+    </form>
 
     <h2>Start Running Model</h2>
     <p>Time Interval: 1 min</p>

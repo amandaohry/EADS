@@ -9,6 +9,7 @@ import dao.ServiceDAO;
 import entity.Service;
 import java.util.*;
 import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -40,11 +41,11 @@ public class ServiceServlet extends HttpServlet {
         
         ArrayList<Service> serviceList = serviceDAO.getServiceDetail(); //Calling getServiceDetail() function
         
-        HashMap<String, ArrayList<Service>> serviceMap2 = serviceDAO.getServiceStatus(); //Calling getServiceStatus() function
+        ArrayList<Service> serviceList2 = serviceDAO.getServiceStatus(); //Calling getServiceStatus() function
 
         
         request.setAttribute("serviceList", serviceList);
-        request.setAttribute("serviceMap2", serviceMap2);
+        request.setAttribute("serviceList2", serviceList2);
         
         
         request.getRequestDispatcher("/Service.jsp").forward(request, response);

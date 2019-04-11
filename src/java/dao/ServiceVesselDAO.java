@@ -6,7 +6,9 @@
 package dao;
 
 import com.google.gson.stream.JsonReader;
+import static dao.VesselDAO.vesselList;
 import entity.ServiceVessel;
+import entity.Vessel;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,27 +25,28 @@ import java.util.Map;
  */
 public class ServiceVesselDAO {
     private ServiceVessel serviceVessel;
-    private HashMap<String, ServiceVessel> serviceVesselMap;
-    public ArrayList<ServiceVessel> serviceVessels;
+    //private ArrayList<ServiceVessel> serviceVesselList;
+    public ArrayList<ServiceVessel> serviceVesselList;
     public int smallestCapacity = 825;
-    
+    public HashMap<String, Vessel> map;
+
     public ServiceVesselDAO(){
         this.serviceVessel=null;
-        this.serviceVesselMap = new HashMap<>();
-        this.serviceVessels = new ArrayList<ServiceVessel>();
+        this.serviceVesselList = new ArrayList<ServiceVessel>();
+        this.map = new HashMap<>();
         //this.smallestCapacity = findSmallestCapacity();
     }
     //getServiceVesselDetail()
     //<editor-fold defaultstate="collapsed" desc="getServiceVesselDetail()">
-    public ArrayList<ServiceVessel> mapToList(HashMap<String, ServiceVessel> serviceVesselMap){
-    	for (Map.Entry<String, ServiceVessel> entry : serviceVesselMap.entrySet()) {
-    	    String key = entry.getKey();
-    	    ServiceVessel value = entry.getValue();
-    	    serviceVessels.add(value);
-    	}
-        return serviceVessels;
-    }
-    
+//    public ArrayList<ServiceVessel> mapToList(ArrayList<ServiceVessel> serviceVesselList){
+//    	for (Map.Entry<String, ServiceVessel> entry : serviceVesselList.entrySet()) {
+//    	    String key = entry.getKey();
+//    	    ServiceVessel value = entry.getValue();
+//    	    serviceVessels.add(value);
+//    	}
+//        return serviceVessels;
+//    }
+//
     public ArrayList<ServiceVessel> getServiceVesselDetail() {
         try{
             URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselDetail");
@@ -58,8 +61,7 @@ public class ServiceVesselDAO {
     //                System.out.println("name = " + name);
                     if (name.equals("Result")) {
 
-                        serviceVesselMap = readServiceVesselDetail(jsonReader, serviceVesselMap);
-                        serviceVessels = mapToList(serviceVesselMap);
+                        serviceVesselList = readServiceVesselDetail(jsonReader, serviceVesselList);
                     }
                     if (name.equals("Status")){
                         String status = jsonReader.nextString();
@@ -77,10 +79,10 @@ public class ServiceVesselDAO {
         } catch (IOException e){
             e.printStackTrace();
         }
-        return serviceVessels;
+        return serviceVesselList;
     }
-    
-    public HashMap<String, ServiceVessel> readServiceVesselDetail(JsonReader jsonReader, HashMap<String, ServiceVessel> serviceVesselMap) throws IOException{
+
+    public ArrayList<ServiceVessel> readServiceVesselDetail(JsonReader jsonReader, ArrayList<ServiceVessel> serviceVesselList) throws IOException{
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String mmsi = jsonReader.nextName();
@@ -88,9 +90,9 @@ public class ServiceVesselDAO {
             jsonReader.beginObject();
             int capacity = 0;
             int flowRate = 0;
-            
+
             while (jsonReader.hasNext()) {
-                
+
                 String name = jsonReader.nextName();
 //                System.out.println("name: " + name);
                 if (name.equals("Capacity")){
@@ -101,23 +103,23 @@ public class ServiceVesselDAO {
                     flowRate = jsonReader.nextInt();
 //                    System.out.println("flowRate: " + flowRate);
                 }
-                
+
             }
             ServiceVessel serviceVessel = new ServiceVessel(mmsi, capacity, flowRate);
-            serviceVesselMap.put(mmsi, serviceVessel);
+            serviceVesselList.add(serviceVessel);
             jsonReader.endObject();
         }
         jsonReader.endObject();
-        
-        return serviceVesselMap;
+
+        return serviceVesselList;
     }
-    
+
 //</editor-fold>
-    
+
     //getServiceVesselStatus()
     //<editor-fold defaultstate="collapsed" desc="getServiceVesselStatus()">
-    
-    public HashMap<String, ServiceVessel> getServiceVesselStatus() {
+
+    public ArrayList<ServiceVessel> getServiceVesselStatus() {
         try{
             URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselStatus");
             URLConnection conn = blackbox.openConnection();
@@ -131,7 +133,7 @@ public class ServiceVesselDAO {
     //                System.out.println("name = " + name);
                     if (name.equals("Result")) {
 
-                        serviceVesselMap = readServiceVesselStatus(jsonReader, serviceVesselMap);
+                        serviceVesselList = readServiceVesselStatus(jsonReader, serviceVesselList);
                     }
                     if (name.equals("Status")){
                         String status = jsonReader.nextString();
@@ -149,10 +151,10 @@ public class ServiceVesselDAO {
         } catch (IOException e){
             e.printStackTrace();
         }
-        return serviceVesselMap;
+        return serviceVesselList;
     }
-    
-    public HashMap<String, ServiceVessel> readServiceVesselStatus(JsonReader jsonReader, HashMap<String, ServiceVessel> serviceVesselMap) throws IOException{
+
+    public ArrayList<ServiceVessel> readServiceVesselStatus(JsonReader jsonReader, ArrayList<ServiceVessel> serviceVesselList) throws IOException{
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String mmsi = jsonReader.nextName();
@@ -160,9 +162,9 @@ public class ServiceVesselDAO {
             jsonReader.beginObject();
             int currentHold = 0;
             String status = "";
-            
+
             while (jsonReader.hasNext()) {
-                
+
                 String name = jsonReader.nextName();
 //                System.out.println("name: " + name);
                 if (name.equals("CurrentHold")){
@@ -173,26 +175,25 @@ public class ServiceVesselDAO {
                     status = jsonReader.nextString();
 //                    System.out.println("status: " + status);
                 }
-                
+
             }
-            ArrayList<ServiceVessel> mapValues = new ArrayList<>(serviceVesselMap.values());
-            serviceVessel = serviceVesselMap.get(mmsi);
-            serviceVessel.setCurrentCapacity(currentHold);
-            serviceVessel.setStatus(status);
-            
+            for (ServiceVessel serviceVessel: serviceVesselList){
+                serviceVessel.setCurrentCapacity(currentHold);
+                serviceVessel.setStatus(status);
+            }
             jsonReader.endObject();
         }
         jsonReader.endObject();
-        
-        return serviceVesselMap;
+
+        return serviceVesselList;
     }
-    
+
 //</editor-fold>
-    
+
     //getServiceVesselStatistics()
     //<editor-fold defaultstate="collapsed" desc="getServiceVesselStatistics()">
-    
-    public HashMap<String, ServiceVessel> getServiceVesselStatistics(){
+
+    public ArrayList<ServiceVessel> getServiceVesselStatistics(){
         try {
             URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselStatistics");
             URLConnection conn = blackbox.openConnection();
@@ -206,7 +207,7 @@ public class ServiceVesselDAO {
     //                System.out.println("name = " + name);
                     if (name.equals("Result")) {
 
-                        serviceVesselMap = readServiceVesselStatistics(jsonReader, serviceVesselMap);
+                        serviceVesselList = readServiceVesselStatistics(jsonReader, serviceVesselList);
                     }
                     if (name.equals("Status")){
                         String status = jsonReader.nextString();
@@ -224,10 +225,10 @@ public class ServiceVesselDAO {
         } catch (IOException e){
             e.printStackTrace();
         }
-        return serviceVesselMap;
+        return serviceVesselList;
     }
-    
-    public HashMap<String, ServiceVessel> readServiceVesselStatistics(JsonReader jsonReader, HashMap<String, ServiceVessel> serviceVesselMap) throws IOException{
+
+    public ArrayList<ServiceVessel> readServiceVesselStatistics(JsonReader jsonReader, ArrayList<ServiceVessel> serviceVesselList) throws IOException{
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String mmsi = jsonReader.nextName();
@@ -239,9 +240,9 @@ public class ServiceVesselDAO {
             int fuelDelivered = 0;
             int grossProfit = 0;
             float operCost = 0;
-            
+
             while (jsonReader.hasNext()) {
-                
+
                 String name = jsonReader.nextName();
 //                System.out.println("name: " + name);
                 if (name.equals("Distance")){
@@ -268,230 +269,231 @@ public class ServiceVesselDAO {
                     operCost = (float) jsonReader.nextDouble();
 //                    System.out.println("operCost: " + operCost);
                 }
-                
-                
+
+
             }
-            serviceVessel = serviceVesselMap.get(mmsi);
-            serviceVessel.setDistance(distance);
-            serviceVessel.setDriftTime(driftTime);
-            serviceVessel.setDriftCost(driftCost);
-            serviceVessel.setFuelDelivered(fuelDelivered);
-            serviceVessel.setGrossProfit(grossProfit);
-            serviceVessel.setOperCost(operCost);
-            
+            for (ServiceVessel serviceVessel: serviceVesselList){
+                serviceVessel.setDistance(distance);
+                serviceVessel.setDriftTime(driftTime);
+                serviceVessel.setDriftCost(driftCost);
+                serviceVessel.setFuelDelivered(fuelDelivered);
+                serviceVessel.setGrossProfit(grossProfit);
+                serviceVessel.setOperCost(operCost);
+            }
             jsonReader.endObject();
         }
         jsonReader.endObject();
-        
-        return serviceVesselMap;
-    }
-    
-//</editor-fold>
-    
-    //getServiceVesselDetailByMMSI()
-    //<editor-fold defaultstate="collapsed" desc="getServiceVesselDetailByMMSI()">
-    
-    public ServiceVessel getServiceVesselDetailByMMSI(String mmsi) throws MalformedURLException, IOException{
 
-        URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselDetail?mmsi=" + mmsi);
-        URLConnection conn = blackbox.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        
-        try (JsonReader jsonReader = new JsonReader(in)) {
-            jsonReader.beginObject();
-            while (jsonReader.hasNext()) {
-                
-                String name = jsonReader.nextName();
-//                System.out.println("name = " + name);
-                if (name.equals("Result")) {
-                    
-                    serviceVessel = readServiceVesselDetailByMMSI(jsonReader, serviceVessel);
-                }
-                if (name.equals("Status")){
-                    String status = jsonReader.nextString();
-                }
-                if (name.equals("Warnings")){
-                    readWarnings(jsonReader);
-                }
-            }
-            
-            
-            jsonReader.endObject();
-        }
-        return serviceVessel;
+        return serviceVesselList;
     }
-    
-    public ServiceVessel readServiceVesselDetailByMMSI(JsonReader jsonReader, ServiceVessel serviceVessel) throws IOException{
-        jsonReader.beginObject();
-        while (jsonReader.hasNext()) {
-            String mmsi = jsonReader.nextName();
+
+//</editor-fold>
+//
+//    //getServiceVesselDetailByMMSI()
+//    //<editor-fold defaultstate="collapsed" desc="getServiceVesselDetailByMMSI()">
+//
+//    public ServiceVessel getServiceVesselDetailByMMSI(String mmsi) throws MalformedURLException, IOException{
+//
+//        URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselDetail?mmsi=" + mmsi);
+//        URLConnection conn = blackbox.openConnection();
+//        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//
+//        try (JsonReader jsonReader = new JsonReader(in)) {
+//            jsonReader.beginObject();
+//            while (jsonReader.hasNext()) {
+//
+//                String name = jsonReader.nextName();
+////                System.out.println("name = " + name);
+//                if (name.equals("Result")) {
+//
+//                    serviceVessel = readServiceVesselDetailByMMSI(jsonReader, serviceVessel);
+//                }
+//                if (name.equals("Status")){
+//                    String status = jsonReader.nextString();
+//                }
+//                if (name.equals("Warnings")){
+//                    readWarnings(jsonReader);
+//                }
+//            }
+//
+//
+//            jsonReader.endObject();
+//        }
+//        return serviceVessel;
+//    }
+//
+//    public ServiceVessel readServiceVesselDetailByMMSI(JsonReader jsonReader, ServiceVessel serviceVessel) throws IOException{
+//        jsonReader.beginObject();
+//        while (jsonReader.hasNext()) {
+//            String mmsi = jsonReader.nextName();
+////            System.out.println(mmsi);
+//            jsonReader.beginObject();
+//            int capacity = 0;
+//            int flowRate = 0;
+//
+//            while (jsonReader.hasNext()) {
+//
+//                String name = jsonReader.nextName();
+////                System.out.println("name: " + name);
+//                if (name.equals("Capacity")){
+//                    capacity = jsonReader.nextInt();
+////                    System.out.println("capacity: " + capacity);
+//                }
+//                if (name.equals("FlowRate")){
+//                    flowRate = jsonReader.nextInt();
+////                    System.out.println("flowRate: " + flowRate);
+//                }
+//
+//            }
+//            serviceVessel = serviceVesselList.get(mmsi);
+//
+//            jsonReader.endObject();
+//        }
+//        jsonReader.endObject();
+//
+//        return serviceVessel;
+//    }
+//
+//
+//
+//    //getServiceVesselStatusByMMSI()
+//    //<editor-fold defaultstate="collapsed" desc="getServiceVesselStatusByMMSI()">
+//
+//    public ServiceVessel getServiceVesselStatusByMMSI(String mmsi) throws MalformedURLException, IOException{
+//
+//        URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselStatus?mmsi=" + mmsi);
+//        URLConnection conn = blackbox.openConnection();
+//        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//
+//        try (JsonReader jsonReader = new JsonReader(in)) {
+//            jsonReader.beginObject();
+//            while (jsonReader.hasNext()) {
+//
+//                String name = jsonReader.nextName();
+////                System.out.println("name = " + name);
+//                if (name.equals("Result")) {
+//
+//                    serviceVessel = readServiceVesselStatusByMMSI(jsonReader, serviceVessel);
+//                }
+//                if (name.equals("Status")){
+//                    String status = jsonReader.nextString();
+//                }
+//                if (name.equals("Warnings")){
+//                    readWarnings(jsonReader);
+//                }
+//            }
+//
+//
+//            jsonReader.endObject();
+//        }
+//        return serviceVessel;
+//    }
+//
+//    public ServiceVessel readServiceVesselStatusByMMSI(JsonReader jsonReader, ServiceVessel serviceVessel) throws IOException{
+//        jsonReader.beginObject();
+//        while (jsonReader.hasNext()) {
+//            String mmsi = jsonReader.nextName();
 //            System.out.println(mmsi);
-            jsonReader.beginObject();
-            int capacity = 0;
-            int flowRate = 0;
-            
-            while (jsonReader.hasNext()) {
-                
-                String name = jsonReader.nextName();
-//                System.out.println("name: " + name);
-                if (name.equals("Capacity")){
-                    capacity = jsonReader.nextInt();
-//                    System.out.println("capacity: " + capacity);
-                }
-                if (name.equals("FlowRate")){
-                    flowRate = jsonReader.nextInt();
-//                    System.out.println("flowRate: " + flowRate);
-                }
-                
-            }
-            serviceVessel = serviceVesselMap.get(mmsi);
-            
-            jsonReader.endObject();
-        }
-        jsonReader.endObject();
-        
-        return serviceVessel;
-    }
-    
-//</editor-fold>
-    
-    //getServiceVesselStatusByMMSI()
-    //<editor-fold defaultstate="collapsed" desc="getServiceVesselStatusByMMSI()">
-    
-    public ServiceVessel getServiceVesselStatusByMMSI(String mmsi) throws MalformedURLException, IOException{
+//            jsonReader.beginObject();
+//            int capacity = 0;
+//            int flowRate = 0;
+//
+//            while (jsonReader.hasNext()) {
+//
+//                String name = jsonReader.nextName();
+////                System.out.println("name: " + name);
+//                if (name.equals("Capacity")){
+//                    capacity = jsonReader.nextInt();
+////                    System.out.println("capacity: " + capacity);
+//                }
+//                if (name.equals("FlowRate")){
+//                    flowRate = jsonReader.nextInt();
+////                    System.out.println("flowRate: " + flowRate);
+//                }
+//
+//            }
+//            serviceVessel = serviceVesselList.get(mmsi);
+//
+//            jsonReader.endObject();
+//        }
+//        jsonReader.endObject();
+//
+//        return serviceVessel;
+//    }
+//
+//    //</editor-fold>
+//
+//    //getServiceVesselStatisticsByMMSI()
+//    //<editor-fold defaultstate="collapsed" desc="getServiceVesselStatisticsByMMSI()">
+//
+//    public ServiceVessel getServiceVesselStatisticsByMMSI(String mmsi) throws MalformedURLException, IOException{
+//
+//        URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselStatistics?mmsi=" + mmsi);
+//        URLConnection conn = blackbox.openConnection();
+//        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//
+//        try (JsonReader jsonReader = new JsonReader(in)) {
+//            jsonReader.beginObject();
+//            while (jsonReader.hasNext()) {
+//
+//                String name = jsonReader.nextName();
+////                System.out.println("name = " + name);
+//                if (name.equals("Result")) {
+//
+//                    serviceVessel = readServiceVesselStatisticsByMMSI(jsonReader, serviceVessel);
+//                }
+//                if (name.equals("Status")){
+//                    String status = jsonReader.nextString();
+//                }
+//                if (name.equals("Warnings")){
+//                    readWarnings(jsonReader);
+//                }
+//            }
+//
+//
+//            jsonReader.endObject();
+//        }
+//        return serviceVessel;
+//    }
+//
+//    public ServiceVessel readServiceVesselStatisticsByMMSI(JsonReader jsonReader, ServiceVessel serviceVessel) throws IOException{
+//        jsonReader.beginObject();
+//        while (jsonReader.hasNext()) {
+//            String mmsi = jsonReader.nextName();
+//            System.out.println(mmsi);
+//            jsonReader.beginObject();
+//            int capacity = 0;
+//            int flowRate = 0;
+//
+//            while (jsonReader.hasNext()) {
+//
+//                String name = jsonReader.nextName();
+////                System.out.println("name: " + name);
+//                if (name.equals("Capacity")){
+//                    capacity = jsonReader.nextInt();
+////                    System.out.println("capacity: " + capacity);
+//                }
+//                if (name.equals("FlowRate")){
+//                    flowRate = jsonReader.nextInt();
+////                    System.out.println("flowRate: " + flowRate);
+//                }
+//
+//            }
+//            serviceVessel = serviceVesselList.get(mmsi);
+//
+//            jsonReader.endObject();
+//        }
+//        jsonReader.endObject();
+//
+//        return serviceVessel;
+//    }
+//
+//    //</editor-fold>
+//    //</editor-fold>
 
-        URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselStatus?mmsi=" + mmsi);
-        URLConnection conn = blackbox.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        
-        try (JsonReader jsonReader = new JsonReader(in)) {
-            jsonReader.beginObject();
-            while (jsonReader.hasNext()) {
-                
-                String name = jsonReader.nextName();
-//                System.out.println("name = " + name);
-                if (name.equals("Result")) {
-                    
-                    serviceVessel = readServiceVesselStatusByMMSI(jsonReader, serviceVessel);
-                }
-                if (name.equals("Status")){
-                    String status = jsonReader.nextString();
-                }
-                if (name.equals("Warnings")){
-                    readWarnings(jsonReader);
-                }
-            }
-            
-            
-            jsonReader.endObject();
-        }
-        return serviceVessel;
-    }
-    
-    public ServiceVessel readServiceVesselStatusByMMSI(JsonReader jsonReader, ServiceVessel serviceVessel) throws IOException{
-        jsonReader.beginObject();
-        while (jsonReader.hasNext()) {
-            String mmsi = jsonReader.nextName();
-            System.out.println(mmsi);
-            jsonReader.beginObject();
-            int capacity = 0;
-            int flowRate = 0;
-            
-            while (jsonReader.hasNext()) {
-                
-                String name = jsonReader.nextName();
-//                System.out.println("name: " + name);
-                if (name.equals("Capacity")){
-                    capacity = jsonReader.nextInt();
-//                    System.out.println("capacity: " + capacity);
-                }
-                if (name.equals("FlowRate")){
-                    flowRate = jsonReader.nextInt();
-//                    System.out.println("flowRate: " + flowRate);
-                }
-                
-            }
-            serviceVessel = serviceVesselMap.get(mmsi);
-            
-            jsonReader.endObject();
-        }
-        jsonReader.endObject();
-        
-        return serviceVessel;
-    }
-    
-    //</editor-fold>
-    
-    //getServiceVesselStatisticsByMMSI()
-    //<editor-fold defaultstate="collapsed" desc="getServiceVesselStatisticsByMMSI()">
-    
-    public ServiceVessel getServiceVesselStatisticsByMMSI(String mmsi) throws MalformedURLException, IOException{
-
-        URL blackbox = new URL("http://127.0.0.1:8080/getServiceVesselStatistics?mmsi=" + mmsi);
-        URLConnection conn = blackbox.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        
-        try (JsonReader jsonReader = new JsonReader(in)) {
-            jsonReader.beginObject();
-            while (jsonReader.hasNext()) {
-                
-                String name = jsonReader.nextName();
-//                System.out.println("name = " + name);
-                if (name.equals("Result")) {
-                    
-                    serviceVessel = readServiceVesselStatisticsByMMSI(jsonReader, serviceVessel);
-                }
-                if (name.equals("Status")){
-                    String status = jsonReader.nextString();
-                }
-                if (name.equals("Warnings")){
-                    readWarnings(jsonReader);
-                }
-            }
-            
-            
-            jsonReader.endObject();
-        }
-        return serviceVessel;
-    }
-    
-    public ServiceVessel readServiceVesselStatisticsByMMSI(JsonReader jsonReader, ServiceVessel serviceVessel) throws IOException{
-        jsonReader.beginObject();
-        while (jsonReader.hasNext()) {
-            String mmsi = jsonReader.nextName();
-            System.out.println(mmsi);
-            jsonReader.beginObject();
-            int capacity = 0;
-            int flowRate = 0;
-            
-            while (jsonReader.hasNext()) {
-                
-                String name = jsonReader.nextName();
-//                System.out.println("name: " + name);
-                if (name.equals("Capacity")){
-                    capacity = jsonReader.nextInt();
-//                    System.out.println("capacity: " + capacity);
-                }
-                if (name.equals("FlowRate")){
-                    flowRate = jsonReader.nextInt();
-//                    System.out.println("flowRate: " + flowRate);
-                }
-                
-            }
-            serviceVessel = serviceVesselMap.get(mmsi);
-            
-            jsonReader.endObject();
-        }
-        jsonReader.endObject();
-        
-        return serviceVessel;
-    }
-    
-    //</editor-fold>
-    
     //helper methods
     //<editor-fold defaultstate="collapsed" desc="helper methods">
-    
+
     public void readWarnings(JsonReader rd) throws IOException{
         ArrayList<String> warnings = new ArrayList<>();
         rd.beginArray();
@@ -500,8 +502,167 @@ public class ServiceVesselDAO {
             warnings.add(nextWarning);
         }
         rd.endArray();
+
+    }
+
+
+//</editor-fold>
+    public HashMap<String, Vessel> getVesselDetail() throws MalformedURLException, IOException{
+        
+        URL blackbox = new URL("http://127.0.0.1:8080/getVesselDetail");
+        URLConnection conn = blackbox.openConnection();
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream())); 
+        
+        try(JsonReader jsonReader = new JsonReader(in)){
+            jsonReader.beginObject();
+            while (jsonReader.hasNext()) {
+                
+                String name = jsonReader.nextName();
+                System.out.println("name = " + name);
+                if (name.equals("Result")) {
+                    
+                    map = readVesselDetail(jsonReader, map);
+                }
+                if (name.equals("Status")){
+                    String status = jsonReader.nextString();
+                }
+                if (name.equals("Warnings")){
+                    readWarnings(jsonReader);
+                }
+                
+            }
+            jsonReader.endObject();
+
+            return map;
+        }
         
     }
+    
+    public HashMap<String, Vessel> readVesselDetail(JsonReader jsonReader, HashMap<String, Vessel> map) throws  IOException{
+        jsonReader.beginObject();
+        while(jsonReader.hasNext()){
+            String mmsi = jsonReader.nextName();
+            System.out.println(mmsi);
+            jsonReader.beginObject();
+            String vesselName = "";
+            float beam = 0;
+            float cruiseSpd = 0;
+            float draft = 0;
+            float lengthOfVessel = 0;
+            int weight = 0;
+            
+            while(jsonReader.hasNext()){
+                String name = jsonReader.nextName();
+                System.out.println("name " + name);
+                if(name.equals("Beam")){
+                    beam = (float) jsonReader.nextDouble();
+                }
+                if(name.equals("CruiseSpd")){
+                    cruiseSpd = (float) jsonReader.nextDouble();
+                }
+                if(name.equals("Draft")){
+                    draft = (float) jsonReader.nextDouble();
+                }
+                if(name.equals("LOA")){
+                    lengthOfVessel = (float) jsonReader.nextDouble();
+                }
+                if(name.equals("VslName")){
+                    vesselName = jsonReader.nextString();
+                }
+                if(name.equals("Weight")){
+                    weight = jsonReader.nextInt();
+                }
+            }
+            Vessel oceangoingVessel  = new Vessel(mmsi, vesselName, beam, cruiseSpd, draft, lengthOfVessel, weight );
+            map.put(mmsi, oceangoingVessel);
+            jsonReader.endObject();
+        }
+        jsonReader.endObject();
+        return map;
+    }
+    public HashMap<String, Vessel> getVesselStatus() throws MalformedURLException, IOException{
+        
+        URL blackbox = new URL("http://127.0.0.1:8080/getVesselStatus");
+        URLConnection conn = blackbox.openConnection();
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream())); 
+        
+        try(JsonReader jsonReader = new JsonReader(in)){
+            jsonReader.beginObject();
+            while (jsonReader.hasNext()) {
+                
+                String name = jsonReader.nextName();
+                System.out.println("name = " + name);
+                if (name.equals("Result")) {
+                    
+                    map = readVesselStatus(jsonReader, map);
+                }
+                if (name.equals("Status")){
+                    String status = jsonReader.nextString();
+                }
+                if (name.equals("Warnings")){
+                    readWarnings(jsonReader);
+                }
+                
+            }
+            jsonReader.endObject();
+         
+        }
+        return map;
+    }
+    
+    public HashMap<String, Vessel> readVesselStatus(JsonReader jsonReader, HashMap<String, Vessel> map) throws  IOException{
+        jsonReader.beginObject();
+        while(jsonReader.hasNext()){
+            String mmsi = jsonReader.nextName();
+            System.out.println(mmsi);
+            jsonReader.beginObject();
+            float[] location = new float[2];
+            String locName = "";
+            float speed = 0;
+            float direction = 0;
+            float eta = 0;
+            String destination = "";
+            String status = "";
+            
+            while(jsonReader.hasNext()){
+                String name = jsonReader.nextName();
+                System.out.println("name " + name);
+                if(name.equals("Location")){
+                    location = readLocation(jsonReader);
+                }
+                if(name.equals("LocName")){
+                    locName = jsonReader.nextString();
+                }
+                if(name.equals("Speed")){
+                    speed = (float) jsonReader.nextDouble();
+                }
+                if(name.equals("Direction")){
+                    direction = (float) jsonReader.nextDouble();
+                }
+                if(name.equals("ETA")){
+                    eta = (float)jsonReader.nextDouble();
+                }
+                if(name.equals("Destination")){
+                    destination = jsonReader.nextString();
+                }
+                if(name.equals("Status")){
+                    status = jsonReader.nextString();
+                }
+            }
+            for (ServiceVessel sv: serviceVesselList){
+                if (mmsi.equals(sv.getMMSI())){
+                    sv.setLocName(locName);
+                    sv.setSpeed(speed);
+                }
+            }
+            
+            
+            jsonReader.endObject();
+        }
+        jsonReader.endObject();
+        return map;
+    }
+    
     
     public float[] readLocation(JsonReader rd) throws IOException{
         float[] location = new float[2];
@@ -512,8 +673,16 @@ public class ServiceVesselDAO {
             counter++;
         }
         rd.endArray();
+        System.out.println("-------------------");
+        if (location==null){
+            
+            System.out.println("location is null!");
+        } else {
+            System.out.println("current location:");
+            System.out.println(location[0]);
+            System.out.println(location[1]);
+        }
+        System.out.println("-------------------");
         return location;
     }
-    
-//</editor-fold>
 }
